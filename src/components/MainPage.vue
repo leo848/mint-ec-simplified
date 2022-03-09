@@ -3,15 +3,15 @@ import Vue from "vue";
 import LoginScreen from "./LoginScreen.vue";
 
 export default Vue.extend({
-  name: "MainPage",
+	name: "MainPage",
 
-  components: { LoginScreen },
+	components: { LoginScreen },
 
-  data: () => ({
-    loggedIn: false,
-  }),
+	data: () => ({
+		loggedIn: false,
+	}),
 
-  methods: {},
+	methods: {},
 });
 </script>
 

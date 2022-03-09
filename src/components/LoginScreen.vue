@@ -1,12 +1,15 @@
 <script lang="ts">
 import Vue from "vue";
+import LoginDialog from "./LoginDialog.vue";
+import RegisterDialog from "./RegisterDialog.vue";
 
 export default Vue.extend({
-  name: "LoginScreen",
+	name: "LoginScreen",
+	components: { LoginDialog, RegisterDialog },
 
-  data: () => ({}),
+	data: () => ({}),
 
-  methods: {},
+	methods: {},
 });
 </script>
 
@@ -17,12 +20,8 @@ export default Vue.extend({
         <h1 class="mb-4">Willkommen bei mint-ec-simplified.</h1>
         <h2 class="subheading mb-6">Bitte logge dich ein, um fortzufahren.</h2>
         <v-row align="center" justify="center">
-          <v-btn color="primary" elevation="2" x-large class="mr-4">
-            Login
-          </v-btn>
-          <v-btn color="primary" elevation="2" x-large class="ml-4">
-            Registrieren
-          </v-btn>
+          <LoginDialog />
+          <RegisterDialog />
         </v-row>
       </v-col>
     </v-row>

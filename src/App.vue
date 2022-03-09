@@ -3,15 +3,15 @@ import Vue from "vue";
 import MainPage from "./components/MainPage.vue";
 
 export default Vue.extend({
-  name: "App",
+	name: "App",
 
-  components: {
-    MainPage,
-  },
+	components: {
+		MainPage,
+	},
 
-  data: () => ({
-    //
-  }),
+	data: () => ({
+		//
+	}),
 });
 </script>
 
