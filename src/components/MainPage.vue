@@ -16,5 +16,5 @@ export default Vue.extend({
 </script>
 
 <template>
-  <LoginScreen />
+	<LoginScreen v-if="!loggedIn" />
 </template>

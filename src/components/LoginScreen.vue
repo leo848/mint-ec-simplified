@@ -14,24 +14,24 @@ export default Vue.extend({
 </script>
 
 <template>
-  <v-container fill-height fluid class="bg">
-    <v-row align="center" justify="center">
-      <v-col class="text-center" cols="12">
-        <h1 class="mb-4">Willkommen bei mint-ec-simplified.</h1>
-        <h2 class="subheading mb-6">Bitte logge dich ein, um fortzufahren.</h2>
-        <v-row align="center" justify="center">
-          <LoginDialog />
-          <RegisterDialog />
-        </v-row>
-      </v-col>
-    </v-row>
-  </v-container>
+	<v-container fill-height fluid class="bg">
+		<v-row align="center" justify="center">
+			<v-col class="text-center" cols="12">
+				<h1 class="mb-4">Willkommen bei mint-ec-simplified.</h1>
+				<h2 class="subheading mb-6">Bitte logge dich ein, um fortzufahren.</h2>
+				<v-row align="center" justify="center">
+					<LoginDialog />
+					<RegisterDialog />
+				</v-row>
+			</v-col>
+		</v-row>
+	</v-container>
 </template>
 
 <style>
 .bg {
-  background: url("../../public/img/login-background.jpg");
-  background-size: cover;
-  min-height: 99vh;
+	background: url("../../public/img/login-background.jpg");
+	background-size: cover;
+	min-height: 99vh;
 }
 </style>
