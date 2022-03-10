@@ -24,15 +24,30 @@ export default Vue.extend({
 					/.{2,50}\..{2,50}@gymnasium-essen-werden.de/.test(v) ||
 					"Keine gültige GEW-E-Mail-Adresse.",
 			],
+			name: [
+				(v: string) => !!v || "Bitte gib einen Namen ein.",
+				(v: string) =>
+					v.length <= 100 ||
+					"Dieser Name ist zu lang. Falls dies wirklich dein Name ist, kontaktiere den Systemadministrator.",
+			],
+			displayName: [
+				(v: string) =>
+					v.length <= 32 ||
+					"Bitte wähle einen Display-Namen mit 32 oder weniger Buchstaben.",
+			],
 			password: [
 				(v: string) => !!v || "Bitte gib ein Passwort ein.",
-				(v: string) => v.length > 8 || "Bitte mehr als 8 Zeichen benutzen.",
+				(v: string) => v.length >= 8 || "Bitte mehr als 8 Zeichen benutzen.",
 			],
 		},
 		valid: true,
 	}),
 
-	methods: {},
+	methods: {
+		passwordRepeat(v: string) {
+			return v === this.data.password || "Passwörter stimmen nicht überein.";
+		},
+	},
 });
 </script>
 
@@ -62,6 +77,7 @@ export default Vue.extend({
 								<v-text-field
 									label="Vorname*"
 									v-model="data.firstName"
+									:rules="rules.name"
 									required
 								/>
 							</v-col>
@@ -69,6 +85,7 @@ export default Vue.extend({
 								<v-text-field
 									label="Nachname*"
 									v-model="data.lastName"
+									:rules="rules.name"
 									required
 								/>
 							</v-col>
@@ -77,6 +94,7 @@ export default Vue.extend({
 									label="Anzeigename"
 									v-model="data.displayName"
 									hint="Name, der im UI verwendet wird."
+									:rules="rules.displayName"
 									:placeholder="data.firstName"
 								/>
 							</v-col>
@@ -106,12 +124,15 @@ export default Vue.extend({
 							<v-col cols="12" sm="6">
 								<v-text-field
 									label="Passwort wiederholen*"
-									v-model="data.passwordRepeat"
+									:v-model="[passwordRepeat]"
 									type="password"
 									required
 								/>
 							</v-col>
-							<v-col cols="12" :sm="data.grade?.length == 1 ? 6 : false">
+							<v-col
+								cols="12"
+								:sm="data.grade && data.grade.length == 1 ? 6 : false"
+							>
 								<v-select
 									:items="['5', '6', '7', '8', '9', 'EF', 'Q1', 'Q2']"
 									v-model="data.grade"
@@ -119,7 +140,11 @@ export default Vue.extend({
 									required
 								/>
 							</v-col>
-							<v-col cols="12" sm="6" v-if="data.grade?.length === 1">
+							<v-col
+								cols="12"
+								sm="6"
+								v-if="data.grade && data.grade.length === 1"
+							>
 								<v-select
 									:items="['A', 'B', 'C', 'D', 'E', 'F']"
 									v-model="data.classChar"
@@ -140,7 +165,7 @@ export default Vue.extend({
 				>
 				<v-btn
 					color="blue darken-1"
-					:disabled="!Object.values(data).reduce((a, b) => a && b)"
+					:disabled="!valid"
 					text
 					@click="show = false"
 					>Registrieren</v-btn
