@@ -7,17 +7,18 @@ export default Vue.extend({
 	data: () => ({
 		show: false,
 		data: {
-			firstName: null,
-			lastName: null,
-			displayName: null,
-			email: null,
-			password: null,
-			passwordRepeat: null,
-			grade: null,
-			classChar: null,
+			firstName: null as null | string,
+			lastName: null as null | string,
+			displayName: null as null | string,
+			email: null as null | string,
+			password: null as null | string,
+			passwordRepeat: null as null | string,
+			grade: null as null | string,
+			classChar: null as null | string,
 		},
 		rules: {
 			email: [
+				(v: string | null) => v != null || "",
 				(v: string) => !!v || "Bitte gib eine E-Mail-Adresse ein.",
 				(v: string) => /.+@.+/.test(v) || "Keine gültige E-Mail-Adresse.",
 				(v: string) =>
@@ -25,19 +26,25 @@ export default Vue.extend({
 					"Keine gültige GEW-E-Mail-Adresse.",
 			],
 			name: [
+				(v: string | null) => v != null || "",
 				(v: string) => !!v || "Bitte gib einen Namen ein.",
 				(v: string) =>
+					v == null ||
 					v.length <= 100 ||
 					"Dieser Name ist zu lang. Falls dies wirklich dein Name ist, kontaktiere den Systemadministrator.",
 			],
 			displayName: [
+				(v: string | null) => v != null || "",
 				(v: string) =>
+					v == null ||
 					v.length <= 32 ||
 					"Bitte wähle einen Display-Namen mit 32 oder weniger Buchstaben.",
 			],
 			password: [
+				(v: string | null) => v !== null || "",
 				(v: string) => !!v || "Bitte gib ein Passwort ein.",
-				(v: string) => v.length >= 8 || "Bitte mehr als 8 Zeichen benutzen.",
+				(v: string) =>
+					v == null || v.length >= 8 || "Bitte mehr als 8 Zeichen benutzen.",
 			],
 		},
 		valid: true,
@@ -46,6 +53,19 @@ export default Vue.extend({
 	methods: {
 		passwordRepeat(v: string) {
 			return v === this.data.password || "Passwörter stimmen nicht überein.";
+		},
+		chooseDefault() {
+			return {
+				displayName: () => {
+					if (this.data.displayName) return;
+					this.data.displayName = this.data.firstName;
+				},
+				email: () => {
+					if (this.data.email) return;
+					if (!(this.data.firstName && this.data.lastName)) return;
+					this.data.email = `${this.data.firstName.toLowerCase()}.${this.data.lastName.toLowerCase()}@gymnasium-essen-werden.de`;
+				},
+			};
 		},
 	},
 });
@@ -96,6 +116,7 @@ export default Vue.extend({
 									hint="Name, der im UI verwendet wird."
 									:rules="rules.displayName"
 									:placeholder="data.firstName"
+									@keydown.tab="chooseDefault().displayName"
 								/>
 							</v-col>
 							<v-col cols="12">
@@ -109,6 +130,7 @@ export default Vue.extend({
 											: null
 									"
 									:rules="rules.email"
+									@keydown.tab="chooseDefault().email"
 									required
 								/>
 							</v-col>
