@@ -17,8 +17,8 @@ export default Vue.extend({
 	<v-container fill-height fluid class="bg">
 		<v-row align="center" justify="center">
 			<v-col class="text-center" cols="12">
-				<h1 class="mb-4">Willkommen bei mint-ec-simplified.</h1>
-				<h2 class="subheading mb-6">Bitte logge dich ein, um fortzufahren.</h2>
+				<h1 class="mb-2 text-h2">Willkommen bei mint-ec-simplified.</h1>
+				<h2 class="subheading mb-8">Bitte logge dich ein, um fortzufahren.</h2>
 				<v-row align="center" justify="center">
 					<LoginDialog />
 					<RegisterDialog />
