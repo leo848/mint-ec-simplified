@@ -3,11 +3,17 @@ node_modules
 /dist
 /notes
 
+**/__pycache__
 
 # local env files
 **/.env
 .env.local
 .env.*.local
+
+# database files
+*.sqlite
+*.db
+
 
 # Log files
 npm-debug.log*
