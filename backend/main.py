@@ -13,7 +13,7 @@ load_dotenv()
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-manager = LoginManager(environ["LOGIN_SECRET"], "/login")
+# manager = LoginManager(environ["LOGIN_SECRET"], "/login")
 
 
 
