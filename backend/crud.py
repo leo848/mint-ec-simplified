@@ -4,6 +4,10 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 
 
+# General query method
+def get_query(db: Session, model: type(models.Base), model_id: int):
+    return db.query(model).filter(model.id == id)
+
 # Student methods
 def get_student(db: Session, student_id: int):
     return db.query(models.Student).filter(models.Student.id == student_id).first()
@@ -79,7 +83,6 @@ def delete_teacher(db: Session, teacher_id: int):
 
 # Activity methods
 
-
 def get_activity(db: Session, activity_id: int):
     return db.query(models.Activity).filter(models.Activity.id == activity_id).first()
 
@@ -94,3 +97,19 @@ def create_activity(db: Session, activity: schemas.ActivityCreate):
     db.commit()
     db.refresh(new_activity)
     return new_activity
+
+
+# Category methods
+
+def get_category(db: Session, category_id: int):
+    return db.query(models.Category).filter(models.Category.id == category_id).first()
+
+def get_categories(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Activity).offset(skip).limit(limit).all()
+
+def create_category(db: Session, category: schemas.CategoryCreate):
+    new_category = models.Category(**category.dict())
+    db.add(new_category)
+    db.commit()
+    db.refresh(new_category)
+    return new_category

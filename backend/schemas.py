@@ -1,8 +1,8 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
-
+# Tag models
 class TagBase(BaseModel):
     title: str
     description: str
@@ -20,6 +20,7 @@ class Tag(TagBase):
         orm_mode = True
 
 
+# Activity models
 class ActivityBase(BaseModel):
     title: str
     description: Optional[str] = None
@@ -28,6 +29,8 @@ class ActivityBase(BaseModel):
     created_by_id: int
 
     category_id: int
+
+    tags: list[Tag] = []
 
 
 class ActivityCreate(ActivityBase):
@@ -39,14 +42,13 @@ class Activity(ActivityBase):
     approved_by_id: Optional[int] = None
     approve_status: int = 0
 
-    tags: list[Tag] = []
-
     score: Optional[int] = None
 
     class Config:
         orm_mode = True
 
 
+# Student models
 class StudentBase(BaseModel):
     first_name: str
     last_name: str
@@ -61,6 +63,7 @@ class StudentBase(BaseModel):
 class StudentCreate(StudentBase):
     password: str
 
+
 class Student(StudentBase):
     id: int
     activities: list[Activity]
@@ -69,6 +72,7 @@ class Student(StudentBase):
         orm_mode = True
 
 
+# Teacher models
 class TeacherBase(BaseModel):
     first_name: str
     last_name: str
@@ -88,6 +92,7 @@ class Teacher(TeacherBase):
         orm_mode = True
 
 
+# Category models
 class CategoryBase(BaseModel):
     title: str
     description: str
@@ -103,3 +108,15 @@ class Category(CategoryBase):
 
     class Config:
         orm_mode = True
+
+
+# Other models
+class ActivityReview(BaseModel):
+    teacher_id: int
+    activity_id: int
+    approve_status: int
+
+    @validator("approve_status")
+    def allowed_status(cls, v):
+        assert v in (-1, 0, 1), "Status must be in (-1, 0, 1), got {v}"
+        return v
