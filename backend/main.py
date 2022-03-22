@@ -1,20 +1,38 @@
 from os import environ
 
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, HTTPException
-from fastapi_login import LoginManager
 from sqlalchemy.orm import Session
 
-import crud, models, schemas
+import crud
+import models
+import schemas
 from database import SessionLocal, engine
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordRequestForm
+from fastapi_login import LoginManager
+from fastapi_login.exceptions import InvalidCredentialsException
+from pypbkdf2 import PyPBKDF2 as PasswordHasher
 
 load_dotenv()
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-# manager = LoginManager(environ["LOGIN_SECRET"], "/login")
+manager = LoginManager(environ["LOGIN_SECRET"], "/login")
 
+origins = [
+    *environ["DEV_FRONTEND_URL"].split(","),
+    environ["PROD_FRONTEND_URL"],
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Dependency
 def get_db():
@@ -23,6 +41,22 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+# Login method
+@app.post("/login/")
+def login(data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    email = data.username
+    password = data.password
+
+    user = crud.get_user_by_email(db, email)
+    if not user:
+        raise InvalidCredentialsException
+    p = PasswordHasher(salt_size=63)
+    if not p.verify_password(password, user.password_hash, user.salt):
+        raise InvalidCredentialsException
+    access_token = manager.create_access_token(data={"sub": email})
+    return {"access_token": access_token}
 
 
 # User CRUD methods
@@ -44,7 +78,10 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Email already registered")
     if user.role != 0:
         if not user.register_token:
-            raise HTTPException(status_code=400, detail="Tried to register as a teacher, yet no token given")
+            raise HTTPException(
+                status_code=400,
+                detail="Tried to register as a teacher, yet no token given",
+            )
         if user.register_token != environ["REGISTER_TEACHER_SECRET"]:
             raise HTTPException(status_code=400, detail="Wrong teacher token")
     del user.register_token
@@ -54,7 +91,6 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 @app.delete("/users/{user_id}/", status_code=204)
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     crud.delete_user(db, user_id)
-
 
 
 # Activity CRUD methods

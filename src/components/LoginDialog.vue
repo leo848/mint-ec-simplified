@@ -6,15 +6,46 @@ export default Vue.extend({
 
 	data: () => ({
 		show: false,
+		error: false,
+		loading: false,
 		valid: true,
-		data: { username: null, password: null },
+		data: { email: null as null | string, password: null as null | string },
 		rules: {
-			username: [(v: string) => !!v || "Bitte gib einen Benutzernamen ein"],
+			email: [
+				(v: string | null) => v != null || "",
+				(v: string) => !!v || "Bitte gib eine E-Mail-Adresse ein.",
+				(v: string) => /.+@.+/.test(v) || "Keine gültige E-Mail-Adresse.",
+				(v: string) =>
+					/.{2,50}\..{2,50}@gymnasium-essen-werden.de/.test(v) ||
+					"Keine gültige GEW-E-Mail-Adresse.",
+			],
 			password: [(v: string) => !!v || "Bitte gib ein Passwort ein"],
 		},
 	}),
 
-	methods: {},
+	methods: {
+		async login() {
+			this.loading = true;
+			const response = await fetch(
+				process.env.VUE_APP_BACKEND_ROOT + "/login/",
+				{
+					method: "POST",
+					headers: { "content-type": "application/x-www-form-urlencoded" },
+					body: new URLSearchParams({
+						username: this.data.email as string,
+						password: this.data.password as string,
+					}).toString(),
+				},
+			);
+			this.loading = false;
+			if (!response.ok) {
+				this.error = true;
+				return;
+			}
+			localStorage.setItem("token", (await response.json()).access_token);
+			this.show = false;
+		},
+	},
 });
 </script>
 
@@ -33,6 +64,9 @@ export default Vue.extend({
 			</v-btn>
 		</template>
 		<v-card>
+			<v-alert v-if="error" dismissible type="error"
+				>Falsches Passwort.</v-alert
+			>
 			<v-card-title>
 				<span class="text-h5">Einloggen</span>
 			</v-card-title>
@@ -42,9 +76,9 @@ export default Vue.extend({
 						<v-row>
 							<v-col cols="12">
 								<v-text-field
-									label="Benutzername"
-									v-model="data.username"
-									:rules="rules.username"
+									label="E-Mail-Adresse"
+									v-model="data.email"
+									:rules="rules.email"
 									required
 								></v-text-field>
 							</v-col>
@@ -69,8 +103,9 @@ export default Vue.extend({
 				<v-btn
 					color="blue darken-1"
 					:disabled="!valid"
+					:loading="loading"
 					text
-					@click="show = false"
+					@click="login()"
 				>
 					Einloggen
 				</v-btn>
