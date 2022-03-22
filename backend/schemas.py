@@ -48,45 +48,30 @@ class Activity(ActivityBase):
         orm_mode = True
 
 
-# Student models
-class StudentBase(BaseModel):
+# User models
+class UserBase(BaseModel):
     first_name: str
     last_name: str
-    display_name: str
+    display_name: Optional[str] = None
 
     email: str
 
-    grade: int
+    grade: Optional[int] = None
     cls: Optional[str] = None
 
+    role: int = 0
 
-class StudentCreate(StudentBase):
+
+class UserCreate(UserBase):
     password: str
+    register_token: Optional[str] = None
 
 
-class Student(StudentBase):
+class User(UserBase):
     id: int
-    activities: list[Activity]
+    created_activities: Optional[list[Activity]] = None
+    reviewed_activities: Optional[list[Activity]] = None
 
-    class Config:
-        orm_mode = True
-
-
-# Teacher models
-class TeacherBase(BaseModel):
-    first_name: str
-    last_name: str
-
-    email: str
-
-
-class TeacherCreate(TeacherBase):
-    password: str
-
-
-class Teacher(TeacherBase):
-    id: int
-    activities: list[Activity] = []
 
     class Config:
         orm_mode = True
@@ -114,9 +99,9 @@ class Category(CategoryBase):
 class ActivityReview(BaseModel):
     teacher_id: int
     activity_id: int
-    approve_status: int
+    status: int
 
-    @validator("approve_status")
+    @validator("status")
     def allowed_status(cls, v):
         assert v in (-1, 0, 1), "Status must be in (-1, 0, 1), got {v}"
         return v

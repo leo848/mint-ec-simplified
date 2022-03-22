@@ -5,8 +5,8 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi_login import LoginManager
 from sqlalchemy.orm import Session
 
-from . import crud, models, schemas
-from .database import SessionLocal, engine
+import crud, models, schemas
+from database import SessionLocal, engine
 
 load_dotenv()
 
@@ -25,53 +25,36 @@ def get_db():
         db.close()
 
 
-# Student CRUD methods
-@app.get("/students/", response_model=list[schemas.Student])
-def read_students(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    students = crud.get_students(db, skip=skip, limit=limit)
-    return students
+# User CRUD methods
+@app.get("/users/", response_model=list[schemas.User])
+def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = crud.get_users(db, skip=skip, limit=limit)
+    return users
 
 
-@app.get("/students/{student_id}/", response_model=schemas.Student)
-def read_student(student_id: int, db: Session = Depends(get_db)):
-    return crud.get_student(db, student_id=student_id)
+@app.get("/users/{user_id}/", response_model=schemas.User)
+def read_user(user_id: int, db: Session = Depends(get_db)):
+    return crud.get_user(db, user_id=user_id)
 
 
-@app.post("/students/", response_model=schemas.Student)
-def create_student(student: schemas.StudentCreate, db: Session = Depends(get_db)):
-    db_student = crud.get_student_by_email(db, email=student.email)
-    if db_student:
+@app.post("/users/", response_model=schemas.User)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+    if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_student(db=db, student=student)
+    if user.role != 0:
+        if not user.register_token:
+            raise HTTPException(status_code=400, detail="Tried to register as a teacher, yet no token given")
+        if user.register_token != environ["REGISTER_TEACHER_SECRET"]:
+            raise HTTPException(status_code=400, detail="Wrong teacher token")
+    del user.register_token
+    return crud.create_user(db=db, user=user)
 
 
-@app.delete("/students/{student_id}/", status_code=204)
-def delete_student(student_id: int, db: Session = Depends(get_db)):
-    crud.delete_student(db, student_id)
+@app.delete("/users/{user_id}/", status_code=204)
+def delete_user(user_id: int, db: Session = Depends(get_db)):
+    crud.delete_user(db, user_id)
 
-
-# Teacher CRUD methods
-@app.get("/teachers/", response_model=list[schemas.Teacher])
-def read_teachers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return crud.get_teachers(db, skip=skip, limit=limit)
-
-
-@app.get("/teachers/{teacher_id}/", response_model=schemas.Teacher)
-def read_teacher(teacher_id: int, db: Session = Depends(get_db)):
-    return crud.get_teacher(db, teacher_id=teacher_id)
-
-
-@app.post("/teachers/", response_model=schemas.Teacher)
-def create_teacher(teacher: schemas.TeacherCreate, db: Session = Depends(get_db)):
-    db_teacher = crud.get_teacher_by_email(db, email=teacher.email)
-    if db_teacher:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_teacher(db=db, teacher=teacher)
-
-
-@app.delete("/teachers/{teacher_id}/", status_code=204)
-def delete_student(teacher_id: int, db: Session = Depends(get_db)):
-    crud.delete_teacher(db, teacher_id)
 
 
 # Activity CRUD methods
@@ -116,8 +99,8 @@ def review_activity(review: schemas.ActivityReview, db: Session = Depends(get_db
 
     query.update(
         {
-            "approved_by_id": review.teacher_id if review.approve_status else None,
-            "approve_status": review.approve_status,
+            "reviewed_by_id": review.teacher_id if review.status else None,
+            "reviewed_status": review.status,
         }
     )
     db.commit()

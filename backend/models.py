@@ -1,8 +1,8 @@
-from sqlalchemy import (Boolean, Column, ForeignKey, Integer, SmallInteger,
-                        String, Table)
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, SmallInteger, String, Table
 from sqlalchemy.orm import relationship
 
-from .database import Base
+from database import Base
+
 
 tag_association_table = Table(
     "association",
@@ -17,13 +17,13 @@ class Activity(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    created_by_id = Column(Integer, ForeignKey("students.id"), nullable=False)
-    created_by = relationship("Student", back_populates="activities")
+    created_by_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    created_by = relationship("User", back_populates="created_activities", foreign_keys=[created_by_id])
 
-    approved_by_id = Column(Integer, ForeignKey("teachers.id"), nullable=True)
-    approved_by = relationship("Teacher", back_populates="activities")
+    reviewed_by_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    reviewed_by = relationship("User", back_populates="reviewed_activities", foreign_keys=[reviewed_by_id])
 
-    approve_status = Column(SmallInteger, default=0)
+    review_status = Column(SmallInteger, default=0)
 
     title = Column(String(255), nullable=False)
     description = Column(String(2047), nullable=True)
@@ -39,36 +39,25 @@ class Activity(Base):
     score = Column(Integer, nullable=True)
 
 
-class Student(Base):
-    __tablename__ = "students"
+class User(Base):
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     first_name = Column(String(255), nullable=False)
     last_name = Column(String(255), nullable=False)
-    display_name = Column(String(31), nullable=False)
+    display_name = Column(String(31), nullable=True)
 
     email = Column(String(255), nullable=False)
     password_hash = Column(String(255), nullable=False)
     salt = Column(String(31), nullable=False)
 
-    grade = Column(SmallInteger, nullable=False)
+    grade = Column(SmallInteger, nullable=True)
     cls = Column(String(1), nullable=True)
 
-    activities = relationship("Activity", back_populates="created_by")
+    role = Column(Integer, nullable=False)
 
-
-class Teacher(Base):
-    __tablename__ = "teachers"
-
-    id = Column(Integer, primary_key=True, index=True)
-    first_name = Column(String(255), nullable=False)
-    last_name = Column(String(255), nullable=False)
-
-    email = Column(String(255), nullable=False)
-    password_hash = Column(String(255), nullable=False)
-    salt = Column(String(63), nullable=False)
-
-    activities = relationship("Activity", back_populates="approved_by")
+    created_activities = relationship("Activity", back_populates="created_by", foreign_keys=[Activity.created_by_id])
+    reviewed_activities = relationship("Activity", back_populates="reviewed_by", foreign_keys=[Activity.reviewed_by_id])
 
 
 class Category(Base):
@@ -76,7 +65,7 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    name = Column(String(255), nullable=False)
+    title = Column(String(255), nullable=False)
     description = Column(String(2047), nullable=False)
 
     activities = relationship("Activity", back_populates="category")
