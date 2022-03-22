@@ -76,7 +76,7 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    title = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=False)
     description = Column(String(2047), nullable=False)
 
     activities = relationship("Activity", back_populates="category")
