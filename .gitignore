@@ -13,6 +13,7 @@ node_modules
 # database files
 *.sqlite
 *.db
+*.db-journal
 
 
 # Log files
