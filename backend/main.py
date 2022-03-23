@@ -42,6 +42,11 @@ def get_db():
     finally:
         db.close()
 
+# User query
+@manager.user_loader()
+def query_user(user_email: str):
+    db = next(get_db())
+    return crud.get_user_by_email(db, user_email)
 
 # Login method
 @app.post("/login/")
@@ -58,6 +63,10 @@ def login(data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
     access_token = manager.create_access_token(data={"sub": email})
     return {"access_token": access_token}
 
+# Get info about authenticated user
+@app.get("/me/", response_model=schemas.User)
+def read_authenticated_user(user=Depends(manager)):
+    return user
 
 # User CRUD methods
 @app.get("/users/", response_model=list[schemas.User])

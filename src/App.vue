@@ -16,9 +16,5 @@ export default Vue.extend({
 </script>
 
 <template>
-	<v-app>
-		<v-main>
-			<MainPage />
-		</v-main>
-	</v-app>
+	<MainPage />
 </template>

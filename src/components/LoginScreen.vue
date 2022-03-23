@@ -7,9 +7,20 @@ export default Vue.extend({
 	name: "LoginScreen",
 	components: { LoginDialog, RegisterDialog },
 
-	data: () => ({}),
+	data: () => ({
+		loggedIn: false,
+	}),
 
-	methods: {},
+	methods: {
+		async done() {
+			const response = await fetch(process.env.VUE_APP_BACKEND_ROOT + "/me/", {
+				headers: { Authorization: "Bearer " + localStorage.token },
+			});
+			sessionStorage.setItem("user", JSON.stringify(await response.json()));
+
+			this.$emit("done");
+		},
+	},
 });
 </script>
 
@@ -20,7 +31,7 @@ export default Vue.extend({
 				<h1 class="mb-2 text-h2">Willkommen bei mint-ec-simplified.</h1>
 				<h2 class="subheading mb-8">Bitte logge dich ein, um fortzufahren.</h2>
 				<v-row align="center" justify="center">
-					<LoginDialog />
+					<LoginDialog @done="done" />
 					<RegisterDialog />
 				</v-row>
 			</v-col>
@@ -33,5 +44,6 @@ export default Vue.extend({
 	background: url("../../public/img/login-background.jpg");
 	background-size: cover;
 	min-height: 99vh;
+	min-width: 100vw;
 }
 </style>

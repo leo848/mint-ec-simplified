@@ -1,11 +1,13 @@
 <script lang="ts">
 import Vue from "vue";
 import LoginScreen from "./LoginScreen.vue";
+import StudentView from "./StudentView.vue";
+import NavBar from "./NavBar.vue";
 
 export default Vue.extend({
 	name: "MainPage",
 
-	components: { LoginScreen },
+	components: { NavBar, LoginScreen, StudentView },
 
 	data: () => ({
 		loggedIn: false,
@@ -16,5 +18,11 @@ export default Vue.extend({
 </script>
 
 <template>
-	<LoginScreen v-if="!loggedIn" />
+	<v-app>
+		<NavBar v-if="loggedIn" />
+		<v-main>
+			<LoginScreen v-if="!loggedIn" @done="() => (loggedIn = true)" />
+			<StudentView v-else />
+		</v-main>
+	</v-app>
 </template>

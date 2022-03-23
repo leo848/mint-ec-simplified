@@ -3,10 +3,10 @@ import Vue from "vue";
 
 export default Vue.extend({
 	name: "LoginDialog",
-
 	data: () => ({
 		show: false,
 		error: false,
+		errorMsg: "Unknown error.",
 		loading: false,
 		valid: true,
 		data: { email: null as null | string, password: null as null | string },
@@ -22,10 +22,10 @@ export default Vue.extend({
 			password: [(v: string) => !!v || "Bitte gib ein Passwort ein"],
 		},
 	}),
-
 	methods: {
 		async login() {
 			this.loading = true;
+			this.error = false;
 			const response = await fetch(
 				process.env.VUE_APP_BACKEND_ROOT + "/login/",
 				{
@@ -40,10 +40,20 @@ export default Vue.extend({
 			this.loading = false;
 			if (!response.ok) {
 				this.error = true;
+				if (response.status == 401) {
+					this.errorMsg = "Falscher Benutzername oder falsches Passwort.";
+					this.data.password = "";
+				} else if (response.status == 500) {
+					this.errorMsg =
+						"Ein Serverfehler ist aufgetreten, bitte versuche es später erneut.";
+				} else
+					this.errorMsg =
+						"Ein unbekannter Fehler ist aufgetreten. Überprüfe die Konsole für Details.";
 				return;
 			}
 			localStorage.setItem("token", (await response.json()).access_token);
 			this.show = false;
+			this.$emit("done");
 		},
 	},
 });
@@ -64,9 +74,7 @@ export default Vue.extend({
 			</v-btn>
 		</template>
 		<v-card>
-			<v-alert v-if="error" dismissible type="error"
-				>Falsches Passwort.</v-alert
-			>
+			<v-alert v-if="error" dismissible type="error">{{ errorMsg }}</v-alert>
 			<v-card-title>
 				<span class="text-h5">Einloggen</span>
 			</v-card-title>
