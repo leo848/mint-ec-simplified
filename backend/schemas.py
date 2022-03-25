@@ -39,8 +39,8 @@ class ActivityCreate(ActivityBase):
 
 class Activity(ActivityBase):
     id: int
-    approved_by_id: Optional[int] = None
-    approve_status: int = 0
+    reviewed_by_id: Optional[int] = None
+    review_status: int = 0
 
     score: Optional[int] = None
 

@@ -145,7 +145,7 @@ def review_activity(review: schemas.ActivityReview, db: Session = Depends(get_db
     query.update(
         {
             "reviewed_by_id": review.teacher_id if review.status else None,
-            "reviewed_status": review.status,
+            "review_status": review.status,
         }
     )
     db.commit()
