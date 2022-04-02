@@ -5,10 +5,37 @@ export default Vue.extend({
 	name: "StudentView",
 	data: () => ({
 		user: {},
+		cards: [
+			{
+				title: "Aktivitäten",
+				description:
+					"Sehe den Status deiner Aktivitäten ein oder füge neue hinzu.",
+				color: "red darken-3",
+				icon: "mdi-format-list-bulleted-square",
+			},
+			{
+				title: "Entdecken",
+				description:
+					"Hier kannst du neue Möglichkeiten entdecken, um Punkte zu verdienen.",
+				color: "blue darken-3",
+				icon: "mdi-compass",
+			},
+			{
+				title: "Status",
+				description: "Sehe den Status deines Mint-EC-Zertifikats ein.",
+				color: "green darken-3",
+				icon: "mdi-counter",
+			},
+			{
+				title: "Platzhalter",
+				description:
+					"Vestibulum condimentum dui et elit. Pellentesque porttitor ipsum at ipsum. Nam.",
+				icon: "mdi-script-text",
+			},
+		],
 	}),
 	created() {
 		this.user = JSON.parse(sessionStorage.getItem("user") as string);
-		console.log(this.user);
 	},
 	methods: {},
 });
@@ -16,57 +43,17 @@ export default Vue.extend({
 
 <template>
 	<v-container fluid>
-		<h1>Willkommen, {{ user.display_name }}!</h1>
+		<h1 class="text-h3 mt-4 mb-4">Willkommen, {{ user.display_name }}!</h1>
 		<v-row>
-			<v-col v-for="activity in user.created_activities" :key="activity.id">
-				<v-card class="mx-auto" cols="sm-4">
-					<v-card-title> {{ activity.title }} </v-card-title>
-					<v-card-subtitle> {{ activity.description }} </v-card-subtitle>
-					<v-card-actions>
-						<v-tooltip bottom>
-							<template v-slot:activator="{ on, attrs }">
-								<v-btn
-									icon
-									v-if="activity.review_status === 0"
-									v-bind="attrs"
-									v-on="on"
-								>
-									<v-icon large>mdi-help-circle</v-icon>
-								</v-btn>
-								<v-btn
-									icon
-									v-else-if="activity.review_status === 1"
-									v-bind="attrs"
-									v-on="on"
-								>
-									<v-icon large color="green">mdi-check-circle</v-icon>
-								</v-btn>
-								<v-btn
-									icon
-									v-else-if="activity.review_status === -1"
-									v-bind="attrs"
-									v-on="on"
-								>
-									<v-icon large color="red">mdi-close-circle</v-icon>
-								</v-btn>
-							</template>
-							<span>
-								{{
-									activity.review_status === 0
-										? "Noch nicht bearbeitet"
-										: activity.review_status === 1
-										? "Bestätigt"
-										: activity.review_status === -1
-										? "Abgelehnt"
-										: "Unbekannter Status"
-								}}
-							</span>
-						</v-tooltip>
-						<v-spacer />
-						<v-btn icon>
-							<v-icon>mdi-pencil</v-icon>
-						</v-btn>
-					</v-card-actions>
+			<v-col v-for="(card, i) in cards" :key="i" cols="12" sm="6">
+				<v-card :color="card.color" height="100%" hover>
+					<v-card-title class="text-h4">{{ card.title }}</v-card-title>
+					<v-card-subtitle class="subtitle-1">
+						{{ card.description }} <br />
+					</v-card-subtitle>
+					<v-card-text>
+						<v-icon x-large>{{ card.icon }}</v-icon>
+					</v-card-text>
 				</v-card>
 			</v-col>
 		</v-row>
