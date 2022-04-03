@@ -46,14 +46,15 @@ export default Vue.extend({
 		<h1 class="text-h3 mt-4 mb-4">Willkommen, {{ user.display_name }}!</h1>
 		<v-row>
 			<v-col v-for="(card, i) in cards" :key="i" cols="12" sm="6">
-				<v-card :color="card.color" height="100%" hover>
-					<v-card-title class="text-h4">{{ card.title }}</v-card-title>
-					<v-card-subtitle class="subtitle-1">
-						{{ card.description }} <br />
-					</v-card-subtitle>
-					<v-card-text>
+				<v-card :color="card.color" height="200px" hover>
+					<v-card-title class="text-h4 mb-4">
+						{{ card.title }}
+						<v-spacer />
 						<v-icon x-large>{{ card.icon }}</v-icon>
-					</v-card-text>
+					</v-card-title>
+					<v-card-subtitle class="subtitle-1">
+						{{ card.description }}
+					</v-card-subtitle>
 				</v-card>
 			</v-col>
 		</v-row>
