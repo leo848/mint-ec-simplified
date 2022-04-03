@@ -44,6 +44,9 @@ export default Vue.extend({
 <template>
 	<v-container fluid>
 		<h1 class="text-h3 mt-4 mb-4">Willkommen, {{ user.display_name }}!</h1>
+		<v-alert type="info" text dismissible dense
+			>Keine neuen Benachrichtigungen.</v-alert
+		>
 		<v-row>
 			<v-col v-for="(card, i) in cards" :key="i" cols="12" sm="6">
 				<v-card :color="card.color" height="200px" hover>
