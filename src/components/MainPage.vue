@@ -33,6 +33,7 @@ export default Vue.extend({
 			@update:visible="(v) => (drawerVisible = v)"
 		/>
 		<v-main>
+			<!-- <router-view> -->
 			<LoginScreen v-if="!loggedIn" @done="() => (loggedIn = true)" />
 			<StudentView v-else />
 		</v-main>
