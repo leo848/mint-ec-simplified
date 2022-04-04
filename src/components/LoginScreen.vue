@@ -18,7 +18,6 @@ export default Vue.extend({
 			const response = await fetch(process.env.VUE_APP_BACKEND_ROOT + "/me/", {
 				headers: { Authorization: "Bearer " + localStorage.token },
 			});
-			console.log(response);
 			if (!response.ok) {
 				this.error = true;
 				if (response.status === 401)
@@ -31,7 +30,7 @@ export default Vue.extend({
 			}
 			sessionStorage.setItem("user", JSON.stringify(await response.json()));
 
-			this.$emit("done");
+			this.$router.replace("/");
 		},
 	},
 });
@@ -42,7 +41,7 @@ export default Vue.extend({
 		<v-row align="center" justify="center">
 			<v-col class="text-center" cols="12">
 				<v-row justify="center">
-					<v-alert class="col-4" dismissible type="error" v-model="error">
+					<v-alert class="col-4" dense dismissible type="error" v-model="error">
 						{{ errorMsg }}
 					</v-alert>
 				</v-row>

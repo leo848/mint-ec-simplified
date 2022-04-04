@@ -15,8 +15,6 @@ export default Vue.extend({
 		drawerVisible: true,
 		appTitle: "Dashboard",
 	}),
-
-	methods: {},
 });
 </script>
 
