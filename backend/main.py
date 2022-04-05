@@ -145,6 +145,22 @@ def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_
     return crud.create_category(db, category=category)
 
 
+# Tag CRUD methods
+@app.get("/tags/", response_model=list[schemas.Tag])
+def read_tags(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_tags(db, skip=skip, limit=limit)
+
+
+@app.get("/tags/{tag_id}/", response_model=schemas.Tag)
+def read_tag(tag_id: int):
+    return crud.get_tag(db, category_id=category_id)
+
+
+@app.post("/tags/", response_model=schemas.Tag)
+def create_tag(tag: schemas.TagCreate, db: Session = Depends(get_db)):
+    return crud.create_tag(db, tag=tag)
+
+
 # (As a teacher) review an activity and either accept or reject it.
 @app.post("/review_activity", response_model=schemas.Activity)
 def review_activity(review: schemas.ActivityReview, db: Session = Depends(get_db)):
@@ -164,17 +180,20 @@ def review_activity(review: schemas.ActivityReview, db: Session = Depends(get_db
     return activity
 
 
-# Tag CRUD methods
-@app.get("/tags/", response_model=list[schemas.Tag])
-def read_tags(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return crud.get_tags(db, skip=skip, limit=limit)
+# (As a teacher) review an activity and either accept or reject it.
+@app.post("/review_activity", response_model=schemas.Activity)
+def review_activity(review: schemas.ActivityReview, db: Session = Depends(get_db)):
+    query = db.query(models.Activity).filter(models.Activity.id == review.activity_id)
+    activity = query.first()
+    if not activity:
+        raise HTTPException(status_code=400, detail="Activity not found.")
 
-
-@app.get("/tags/{tag_id}/", response_model=schemas.Tag)
-def read_tag(tag_id: int):
-    return crud.get_tag(db, category_id=category_id)
-
-
-@app.post("/tags/", response_model=schemas.Tag)
-def create_category(category: schemas.TagCreate, db: Session = Depends(get_db)):
-    return crud.create_tag(db, tag=tag)
+    query.update(
+        {
+            "reviewed_by_id": review.teacher_id if review.status else None,
+            "review_status": review.status,
+        }
+    )
+    db.commit()
+    db.refresh(activity)
+    return activity
