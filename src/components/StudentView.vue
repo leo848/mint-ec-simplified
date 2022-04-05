@@ -42,7 +42,7 @@ export default Vue.extend({
 </script>
 
 <template>
-	<v-container fluid>
+	<div class="wrapper">
 		<h1 class="text-h3 mt-4 mb-4">Willkommen, {{ user.display_name }}!</h1>
 		<v-alert type="info" text dismissible dense
 			>Keine neuen Benachrichtigungen.</v-alert
@@ -61,5 +61,5 @@ export default Vue.extend({
 				</v-card>
 			</v-col>
 		</v-row>
-	</v-container>
+	</div>
 </template>

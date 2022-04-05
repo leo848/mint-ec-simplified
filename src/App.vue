@@ -5,16 +5,16 @@ import Vue from "vue";
 import NavDrawer from "@/components/NavDrawer.vue";
 import NavBar from "@/components/NavBar.vue";
 
-if (process.env.NODE_ENV === "development") {
-	/* devtools.connect(); */
-}
-
 export default Vue.extend({
-	data: function () {
-		return {
-			drawerVisible: true,
-			appTitle: "Dashboard",
-		};
+	data: () => ({
+		drawerVisible: true,
+		appTitle: "Dashboard",
+	}),
+	async created() {
+		const response = await fetch(process.env.VUE_APP_BACKEND_ROOT + "/me/", {
+			headers: { Authorization: "Bearer " + localStorage.token },
+		});
+		if (!response.ok) this.$router.push("/login");
 	},
 	components: { NavDrawer, NavBar },
 });
@@ -23,7 +23,7 @@ export default Vue.extend({
 	<div id="app">
 		<v-app>
 			<NavBar
-				:title="appTitle"
+				title="Titel -noch ändern"
 				v-if="$router.history.current.name !== 'login'"
 				@drawerVisibilityToggle="drawerVisible = !drawerVisible"
 			/>

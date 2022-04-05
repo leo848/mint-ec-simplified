@@ -5,9 +5,13 @@ export default Vue.extend({
 	name: "NavDrawer",
 	data: () => ({
 		navItems: [
-			{ title: "Dashboard", icon: "mdi-view-dashboard" },
+			{ title: "Dashboard", icon: "mdi-view-dashboard", route: "/" },
 			{ title: "Entdecken", icon: "mdi-compass" },
-			{ title: "Aktivitäten", icon: "mdi-format-list-bulleted-square" },
+			{
+				title: "Aktivitäten",
+				icon: "mdi-format-list-bulleted-square",
+				route: "/activities",
+			},
 		],
 	}),
 	methods: {
@@ -45,7 +49,12 @@ export default Vue.extend({
 		<v-divider />
 
 		<v-list nav>
-			<v-list-item v-for="item in navItems" :key="item.title" link>
+			<v-list-item
+				v-for="item in navItems"
+				:key="item.title"
+				:to="item.route"
+				link
+			>
 				<v-list-item-icon>
 					<v-icon>{{ item.icon }}</v-icon>
 				</v-list-item-icon>
