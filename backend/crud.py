@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 import models, schemas
 
 
-
 # User methods
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
@@ -36,13 +35,14 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.refresh(new_db_user)
     return new_db_user
 
+
 def delete_user(db: Session, user_id: int):
     db.query(models.User).filter(models.User.id == user_id).delete()
     db.commit()
 
 
-
 # Activity methods
+
 
 def get_activity(db: Session, activity_id: int):
     return db.query(models.Activity).filter(models.Activity.id == activity_id).first()
@@ -62,11 +62,14 @@ def create_activity(db: Session, activity: schemas.ActivityCreate):
 
 # Category methods
 
+
 def get_category(db: Session, category_id: int):
     return db.query(models.Category).filter(models.Category.id == category_id).first()
 
+
 def get_categories(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Category).offset(skip).limit(limit).all()
+
 
 def create_category(db: Session, category: schemas.CategoryCreate):
     new_category = models.Category(**category.dict())
@@ -74,3 +77,22 @@ def create_category(db: Session, category: schemas.CategoryCreate):
     db.commit()
     db.refresh(new_category)
     return new_category
+
+
+# Tag methods
+
+
+def get_tag(db: Session, tag_id: int):
+    return db.query(models.Category).filter(models.Category.id == tag_id).first()
+
+
+def get_tags(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Category).offset(skip).limit(limit).all()
+
+
+def create_tag(db: Session, tag: schemas.TagCreate):
+    new_tag = models.Tag(**tag.dict())
+    db.add(new_tag)
+    db.commit()
+    db.refresh(new_tag)
+    return new_tag

@@ -162,3 +162,19 @@ def review_activity(review: schemas.ActivityReview, db: Session = Depends(get_db
     db.commit()
     db.refresh(activity)
     return activity
+
+
+# Tag CRUD methods
+@app.get("/tags/", response_model=list[schemas.Tag])
+def read_tags(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_tags(db, skip=skip, limit=limit)
+
+
+@app.get("/tags/{tag_id}/", response_model=schemas.Tag)
+def read_tag(tag_id: int):
+    return crud.get_tag(db, category_id=category_id)
+
+
+@app.post("/tags/", response_model=schemas.Tag)
+def create_category(category: schemas.TagCreate, db: Session = Depends(get_db)):
+    return crud.create_tag(db, tag=tag)
