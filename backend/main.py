@@ -178,22 +178,3 @@ def review_activity(review: schemas.ActivityReview, db: Session = Depends(get_db
     db.commit()
     db.refresh(activity)
     return activity
-
-
-# (As a teacher) review an activity and either accept or reject it.
-@app.post("/review_activity", response_model=schemas.Activity)
-def review_activity(review: schemas.ActivityReview, db: Session = Depends(get_db)):
-    query = db.query(models.Activity).filter(models.Activity.id == review.activity_id)
-    activity = query.first()
-    if not activity:
-        raise HTTPException(status_code=400, detail="Activity not found.")
-
-    query.update(
-        {
-            "reviewed_by_id": review.teacher_id if review.status else None,
-            "review_status": review.status,
-        }
-    )
-    db.commit()
-    db.refresh(activity)
-    return activity
