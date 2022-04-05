@@ -72,7 +72,7 @@ export default Vue.extend({
 							</v-col>
 							<v-col cols="12" sm="12">
 								<v-textarea
-									label="Beschreibung"
+									label="Beschreibung (optional)"
 									v-model="data.description"
 									:rules="rules.description"
 									counter="2000"
@@ -82,7 +82,7 @@ export default Vue.extend({
 							</v-col>
 							<v-col cols="12" sm="6">
 								<v-text-field
-									label="Website"
+									label="Website (optional)"
 									v-model="data.website"
 									:rules="rules.website"
 									clearable

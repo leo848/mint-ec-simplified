@@ -21,16 +21,17 @@ class Tag(TagBase):
 
 
 # Activity models
-class ActivityBase(BaseModel):
+class ActivityStudentCreate(BaseModel):
     title: str
     description: Optional[str] = None
     website: Optional[str] = None
 
-    created_by_id: int
-
     category_id: int
 
     tags: list[Tag] = []
+
+class ActivityBase(ActivityStudentCreate):
+    created_by_id: int
 
 
 class ActivityCreate(ActivityBase):
