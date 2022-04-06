@@ -90,7 +90,6 @@ class CategoryCreate(CategoryBase):
 
 class Category(CategoryBase):
     id: int
-    activities: list[Activity] = []
 
     class Config:
         orm_mode = True

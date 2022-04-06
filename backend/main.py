@@ -131,7 +131,12 @@ def create_activity(
 
 # Category CRUD methods
 @app.get("/categories/", response_model=list[schemas.Category])
-def read_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_categories(
+    skip: int = 0,
+    limit: int = 100,
+    user=Depends(manager),
+    db: Session = Depends(get_db),
+):
     return crud.get_categories(db, skip=skip, limit=limit)
 
 
@@ -147,7 +152,12 @@ def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_
 
 # Tag CRUD methods
 @app.get("/tags/", response_model=list[schemas.Tag])
-def read_tags(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_tags(
+    skip: int = 0,
+    limit: int = 100,
+    user=Depends(manager),
+    db: Session = Depends(get_db),
+):
     return crud.get_tags(db, skip=skip, limit=limit)
 
 

@@ -8,6 +8,8 @@ export default Vue.extend({
 		activeDatePicker: "YEAR",
 		data: { title: "", description: "", date: null },
 		dateMenu: false,
+		categoryList: [],
+		tagList: [],
 		rules: {
 			title: [
 				(v: string) => !!v || "Bitte gib einen Titel ein.",
@@ -16,8 +18,6 @@ export default Vue.extend({
 					v.length < 200 || "Bitte gib nicht mehr als 200 Zeichen ein.",
 			],
 			description: [
-				(v: string) =>
-					!v || v.length >= 10 || "Bitte gib mehr als 10 Zeichen ein.",
 				(v: string) =>
 					!v ||
 					v.length <= 2000 ||
@@ -33,6 +33,30 @@ export default Vue.extend({
 			],
 		},
 	}),
+	async created() {
+		await this.fetchRequiredData();
+	},
+	methods: {
+		upload() {
+			this.show = false;
+		},
+		async fetchRequiredData() {
+			let categoryRequest = fetch(
+				process.env.VUE_APP_BACKEND_ROOT + "/categories",
+				{
+					headers: { Authorization: "Bearer " + localStorage.token },
+				},
+			);
+			let tagRequest = fetch(process.env.VUE_APP_BACKEND_ROOT + "/tags", {
+				headers: { Authorization: "Bearer " + localStorage.token },
+			});
+			let [categories, tags] = await Promise.all([categoryRequest, tagRequest]);
+			[this.categoryList, this.tagList] = await Promise.all([
+				categories.json(),
+				tags.json(),
+			]);
+		},
+	},
 });
 </script>
 
@@ -72,24 +96,12 @@ export default Vue.extend({
 									required
 								/>
 							</v-col>
-							<v-col cols="12" sm="12">
-								<v-textarea
-									label="Beschreibung (optional)"
-									v-model="data.description"
-									:rules="rules.description"
-									counter="2000"
-									clearable
-									clear-icon="mdi-close"
-								></v-textarea>
-							</v-col>
 							<v-col cols="12" sm="6">
-								<v-text-field
-									label="Website (optional)"
-									v-model="data.website"
-									:rules="rules.website"
-									clearable
-									clear-icon="mdi-close"
-								></v-text-field>
+								<v-select
+									:items="categoryList.map((c) => c.title)"
+									label="Kategorie"
+									@click="fetchRequiredData"
+								/>
 							</v-col>
 							<v-col cols="12" sm="6">
 								<v-menu
@@ -102,7 +114,7 @@ export default Vue.extend({
 									<template v-slot:activator="{ on, attrs }">
 										<v-text-field
 											v-model="data.date"
-											label="Zeitraum"
+											label="Datum"
 											prepend-icon="mdi-calendar"
 											readonly
 											v-bind="attrs"
@@ -126,6 +138,28 @@ export default Vue.extend({
 									></v-date-picker>
 								</v-menu>
 							</v-col>
+							<v-col cols="12" sm="6">
+								<v-text-field
+									label="Website (optional)"
+									v-model="data.website"
+									:rules="rules.website"
+									prepend-icon="mdi-web"
+									clearable
+									clear-icon="mdi-close"
+								/>
+							</v-col>
+							<v-col cols="12" sm="12">
+								<v-textarea
+									label="Beschreibung (optional)"
+									v-model="data.description"
+									:rules="rules.description"
+									counter="2000"
+									rows="3"
+									auto-grow
+									clearable
+									clear-icon="mdi-close"
+								></v-textarea>
+							</v-col>
 						</v-row>
 					</v-container>
 				</v-form>
@@ -135,11 +169,7 @@ export default Vue.extend({
 				<v-btn color="blue darken-1" text @click="show = false"
 					>Abbrechen</v-btn
 				>
-				<v-btn
-					color="blue darken-1"
-					:disabled="!valid"
-					text
-					@click="show = false"
+				<v-btn color="blue darken-1" :disabled="!valid" text @click="upload"
 					>Registrieren</v-btn
 				>
 			</v-card-actions>

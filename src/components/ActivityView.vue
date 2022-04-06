@@ -36,7 +36,7 @@ export default Vue.extend({
 									v-bind="attrs"
 									v-on="on"
 								>
-									<v-icon large>mdi-dots-horizontal-circle</v-icon>
+									<v-icon large>mdi-clock-time-eight</v-icon>
 								</v-btn>
 								<v-btn
 									icon
