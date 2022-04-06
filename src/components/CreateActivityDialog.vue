@@ -6,7 +6,7 @@ export default Vue.extend({
 		show: false,
 		valid: true,
 		activeDatePicker: "YEAR",
-		data: { title: "", description: "", date: null },
+		data: { title: "", description: "", date: null, category: 0 },
 		dateMenu: false,
 		categoryList: [],
 		tagList: [],
@@ -98,8 +98,15 @@ export default Vue.extend({
 							</v-col>
 							<v-col cols="12" sm="6">
 								<v-select
-									:items="categoryList.map((c) => c.title)"
 									label="Kategorie"
+									:items="categoryList"
+									v-model="data.category"
+									item-text="title"
+									item-value="id"
+									:hint="`${data.category.description || 'Bitte auswählen'}`"
+									persistent-hint
+									return-object
+									single-line
 									@click="fetchRequiredData"
 								/>
 							</v-col>
