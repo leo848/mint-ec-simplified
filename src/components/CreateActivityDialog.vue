@@ -6,10 +6,12 @@ export default Vue.extend({
 		show: false,
 		valid: true,
 		activeDatePicker: "YEAR",
-		data: { title: "", description: "", date: null, category: 0 },
+		data: { title: "", description: "", date: null, category: 0, website: "" },
 		dateMenu: false,
 		categoryList: [],
 		tagList: [],
+		websitePreview: null as null | { [key: string]: string | boolean },
+		cardError: false,
 		rules: {
 			title: [
 				(v: string) => !!v || "Bitte gib einen Titel ein.",
@@ -55,6 +57,28 @@ export default Vue.extend({
 				categories.json(),
 				tags.json(),
 			]);
+		},
+		async getLinkPreview() {
+			// requires linkpreview API key
+			if (!this.data.website || !process.env.VUE_APP_LINK_PREVIEW_API_KEY) {
+				this.websitePreview = null;
+				return;
+			}
+			this.websitePreview = { loading: true };
+			if (!/^https?:\/\//.test(this.data.website))
+				this.data.website = "https://" + this.data.website;
+			const request = await fetch("https://api.linkpreview.net/", {
+				method: "POST",
+				body: `key=${process.env.VUE_APP_LINK_PREVIEW_API_KEY}&q=${this.data.website}`,
+			});
+			if (!request.ok) {
+				this.cardError = true;
+				return;
+			}
+			this.websitePreview = (await request.json()) as { [key: string]: string };
+		},
+		truncateString(str: string, len: number) {
+			return str.length <= len ? str : str.slice(0, len - 3) + "...";
 		},
 	},
 });
@@ -145,7 +169,7 @@ export default Vue.extend({
 									></v-date-picker>
 								</v-menu>
 							</v-col>
-							<v-col cols="12" sm="6">
+							<v-col cols="12" sm="5">
 								<v-text-field
 									label="Website (optional)"
 									v-model="data.website"
@@ -153,7 +177,31 @@ export default Vue.extend({
 									prepend-icon="mdi-web"
 									clearable
 									clear-icon="mdi-close"
+									@blur="getLinkPreview()"
 								/>
+							</v-col>
+							<v-col cols="12" sm="7" v-if="websitePreview">
+								<v-card
+									dense
+									:loading="websitePreview.loading"
+									:color="cardError ? 'red' : 'gray'"
+								>
+									<v-list-item three-line>
+										<v-list-item-content>
+											<div class="text-overline mb-2">VORSCHAU</div>
+											<v-list-item-title class="text-h5 mb-1">
+												{{ websitePreview.title }}
+											</v-list-item-title>
+											<v-list-item-subtitle>{{
+												websitePreview.description
+											}}</v-list-item-subtitle>
+										</v-list-item-content>
+
+										<v-list-item-avatar tile size="100">
+											<v-img :src="websitePreview.image"
+										/></v-list-item-avatar>
+									</v-list-item>
+								</v-card>
 							</v-col>
 							<v-col cols="12" sm="12">
 								<v-textarea
