@@ -1,11 +1,12 @@
 from typing import Optional
+import datetime
 
 from pydantic import BaseModel, validator
 
 # Tag models
 class TagBase(BaseModel):
     title: str
-    description: str
+    description: Optional[str] = None
 
 
 class TagCreate(TagBase):
@@ -13,7 +14,6 @@ class TagCreate(TagBase):
 
 
 class Tag(TagBase):
-    id: int
     # activities: list[Activity] = [] # cross-referential problem, no solution yet FIXME
 
     class Config:
@@ -21,25 +21,28 @@ class Tag(TagBase):
 
 
 # Activity models
-class ActivityStudentCreate(BaseModel):
+class ActivityBase(BaseModel):
     title: str
     description: Optional[str] = None
     website: Optional[str] = None
 
     category_id: int
 
-    tags: list[Tag] = []
 
-class ActivityBase(ActivityStudentCreate):
+class ActivityCreate(ActivityBase):
+    tags: list[str] = []
+    date: str
+
+class ActivityDBCreate(ActivityBase):
+    tags: list[Tag] = []
+    date: datetime.date
     created_by_id: int
 
 
-class ActivityCreate(ActivityBase):
-    pass
 
-
-class Activity(ActivityBase):
+class Activity(ActivityDBCreate):
     id: int
+
     reviewed_by_id: Optional[int] = None
     review_status: int = 0
 

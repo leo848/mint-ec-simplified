@@ -4,6 +4,7 @@ node_modules
 /notes
 
 **/__pycache__
+**/.__mypy_cache__
 
 # local env files
 **/.env
@@ -29,3 +30,7 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+*.bak
+
+*.sql
+*.sql.sh

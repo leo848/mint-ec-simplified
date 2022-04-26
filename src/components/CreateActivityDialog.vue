@@ -4,9 +4,19 @@ import Vue from "vue";
 export default Vue.extend({
 	data: () => ({
 		show: false,
+		loading: false,
+		error: false,
+		errorMsg: "",
 		valid: true,
 		activeDatePicker: "YEAR",
-		data: { title: "", description: "", date: null, category: 0, website: "" },
+		data: {
+			title: "",
+			description: "",
+			date: null,
+			category: null,
+			website: "",
+			tags: [],
+		},
 		dateMenu: false,
 		categoryList: [],
 		tagList: [],
@@ -39,7 +49,44 @@ export default Vue.extend({
 		await this.fetchRequiredData();
 	},
 	methods: {
-		upload() {
+		async upload() {
+			this.error = false;
+			this.loading = true;
+
+			this.data.tags = this.data.tags.map((t) => (t["title"] ? t["title"] : t));
+			if (this.data.category == null) return;
+			const data = {
+				title: this.data.title,
+				description: this.data.description,
+				date: this.data.date,
+				website: this.data.website,
+				category_id: this.data.category["id"],
+				tags: this.data.tags,
+			};
+			console.log(JSON.stringify(data));
+			const response = await fetch(
+				process.env.VUE_APP_BACKEND_ROOT + "/activities",
+				{
+					method: "POST",
+					headers: {
+						"content-type": "application/json",
+						"Authorization": "Bearer " + localStorage.token,
+					},
+					body: JSON.stringify(data),
+				},
+			);
+			this.loading = false;
+			if (!response.ok) {
+				this.error = true;
+				if (response.status === 500) {
+					this.errorMsg =
+						"Ein Serverfehler ist aufgetreten, bitte versuche es später erneut.";
+				} else
+					this.errorMsg =
+						"Ein unbekannter Fehler ist aufgetreten. Überprüfe die Konsole für Details.";
+				return;
+			}
+			localStorage.setItem("token", (await response.json()).access_token);
 			this.show = false;
 		},
 		async fetchRequiredData() {
@@ -59,6 +106,7 @@ export default Vue.extend({
 			]);
 		},
 		async getLinkPreview() {
+			this.cardError = false;
 			// requires linkpreview API key
 			if (!this.data.website || !process.env.VUE_APP_LINK_PREVIEW_API_KEY) {
 				this.websitePreview = null;
@@ -102,6 +150,7 @@ export default Vue.extend({
 			</v-btn>
 		</template>
 		<v-card>
+			<v-alert v-if="error" dismissible type="error">{{ errorMsg }}</v-alert>
 			<v-card-title>
 				<span class="text-h5">Neue Aktivität hinzufügen</span>
 			</v-card-title>
@@ -127,7 +176,9 @@ export default Vue.extend({
 									v-model="data.category"
 									item-text="title"
 									item-value="id"
-									:hint="`${data.category.description || 'Bitte auswählen'}`"
+									:hint="`${
+										(data.category || {}).description || 'Bitte auswählen'
+									}`"
 									persistent-hint
 									return-object
 									single-line
@@ -190,7 +241,11 @@ export default Vue.extend({
 										<v-list-item-content>
 											<div class="text-overline mb-2">VORSCHAU</div>
 											<v-list-item-title class="text-h5 mb-1">
-												{{ websitePreview.title }}
+												{{
+													cardError
+														? "Fehler beim Laden der Vorschau"
+														: websitePreview.title
+												}}
 											</v-list-item-title>
 											<v-list-item-subtitle>{{
 												websitePreview.description
@@ -214,6 +269,17 @@ export default Vue.extend({
 									clearable
 									clear-icon="mdi-close"
 								></v-textarea>
+							</v-col>
+							<v-col cols="12">
+								<v-combobox
+									v-model="data.tags"
+									:items="tagList"
+									item-text="title"
+									item-value="id"
+									label="Tags"
+									chips
+									multiple
+								/>
 							</v-col>
 						</v-row>
 					</v-container>

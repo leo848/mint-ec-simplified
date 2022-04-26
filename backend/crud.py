@@ -52,7 +52,7 @@ def get_activities(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Activity).offset(skip).limit(limit).all()
 
 
-def create_activity(db: Session, activity: schemas.ActivityCreate):
+def create_activity(db: Session, activity: schemas.ActivityDBCreate):
     new_activity = models.Activity(**activity.dict())
     db.add(new_activity)
     db.commit()

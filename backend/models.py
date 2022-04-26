@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, SmallInteger, String, Table
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, SmallInteger, String, Table, Date
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -8,7 +8,7 @@ tag_association_table = Table(
     "association",
     Base.metadata,
     Column("activity", ForeignKey("activities.id"), primary_key=True),
-    Column("tag", ForeignKey("tags.id"), primary_key=True),
+    Column("tag", ForeignKey("tags.title"), primary_key=True),
 )
 
 
@@ -16,6 +16,9 @@ class Activity(Base):
     __tablename__ = "activities"
 
     id = Column(Integer, primary_key=True, index=True)
+
+    date = Column(Date, nullable=False)
+
 
     created_by_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     created_by = relationship("User", back_populates="created_activities", foreign_keys=[created_by_id])
@@ -74,10 +77,8 @@ class Category(Base):
 class Tag(Base):
     __tablename__ = "tags"
 
-    id = Column(Integer, primary_key=True, index=True)
-
-    title = Column(String(255), nullable=False)
-    description = Column(String(2047), nullable=False)
+    title = Column(String(255), primary_key=True, nullable=False)
+    description = Column(String(2047), nullable=True)
 
     activities = relationship(
         "Activity", secondary=tag_association_table, back_populates="tags"
