@@ -65,7 +65,7 @@ export default Vue.extend({
 			};
 			console.log(JSON.stringify(data));
 			const response = await fetch(
-				process.env.VUE_APP_BACKEND_ROOT + "/activities",
+				process.env.VUE_APP_BACKEND_ROOT + "/activities/",
 				{
 					method: "POST",
 					headers: {
@@ -88,15 +88,16 @@ export default Vue.extend({
 			}
 			localStorage.setItem("token", (await response.json()).access_token);
 			this.show = false;
+			this.$emit("done");
 		},
 		async fetchRequiredData() {
 			let categoryRequest = fetch(
-				process.env.VUE_APP_BACKEND_ROOT + "/categories",
+				process.env.VUE_APP_BACKEND_ROOT + "/categories/",
 				{
 					headers: { Authorization: "Bearer " + localStorage.token },
 				},
 			);
-			let tagRequest = fetch(process.env.VUE_APP_BACKEND_ROOT + "/tags", {
+			let tagRequest = fetch(process.env.VUE_APP_BACKEND_ROOT + "/tags/", {
 				headers: { Authorization: "Bearer " + localStorage.token },
 			});
 			let [categories, tags] = await Promise.all([categoryRequest, tagRequest]);
@@ -291,7 +292,7 @@ export default Vue.extend({
 					>Abbrechen</v-btn
 				>
 				<v-btn color="blue darken-1" :disabled="!valid" text @click="upload"
-					>Registrieren</v-btn
+					>Fertig</v-btn
 				>
 			</v-card-actions>
 		</v-card>

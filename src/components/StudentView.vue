@@ -11,6 +11,7 @@ export default Vue.extend({
 				description:
 					"Sehe den Status deiner Aktivitäten ein oder füge neue hinzu.",
 				color: "red darken-3",
+				link: "/activities",
 				icon: "mdi-format-list-bulleted-square",
 			},
 			{
@@ -18,18 +19,21 @@ export default Vue.extend({
 				description:
 					"Hier kannst du neue Möglichkeiten entdecken, um Punkte zu verdienen.",
 				color: "blue darken-3",
+				link: "#",
 				icon: "mdi-compass",
 			},
 			{
 				title: "Status",
 				description: "Sehe den Status deines Mint-EC-Zertifikats ein.",
 				color: "green darken-3",
+				link: "#",
 				icon: "mdi-counter",
 			},
 			{
 				title: "Platzhalter",
 				description:
 					"Vestibulum condimentum dui et elit. Pellentesque porttitor ipsum at ipsum. Nam.",
+				link: "#",
 				icon: "mdi-script-text",
 			},
 		],
@@ -49,7 +53,7 @@ export default Vue.extend({
 		>
 		<v-row>
 			<v-col v-for="(card, i) in cards" :key="i" cols="12" sm="6">
-				<v-card :color="card.color" height="200px" hover>
+				<v-card :color="card.color" :to="card.link" height="200px" hover>
 					<v-card-title class="text-h4 mb-4">
 						{{ card.title }}
 						<v-spacer />

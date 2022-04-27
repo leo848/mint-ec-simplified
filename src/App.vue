@@ -23,7 +23,6 @@ export default Vue.extend({
 	<div id="app">
 		<v-app>
 			<NavBar
-				title="Titel -noch ändern"
 				v-if="$router.history.current.name !== 'login'"
 				@drawerVisibilityToggle="drawerVisible = !drawerVisible"
 			/>

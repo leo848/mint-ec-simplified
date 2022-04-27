@@ -6,10 +6,26 @@ export default Vue.extend({
 	name: "ActivityView",
 	data: () => ({
 		user: {},
+		activities: [],
+		loading: false,
 	}),
 	components: { CreateActivityDialog },
-	created() {
+	async created() {
 		this.user = JSON.parse(sessionStorage.getItem("user") as string);
+		this.loading = true;
+		await this.fetchActivities();
+		this.loading = false;
+	},
+	methods: {
+		async fetchActivities() {
+			let response = await fetch(
+				process.env.VUE_APP_BACKEND_ROOT + "/student/activities/",
+				{
+					headers: { Authorization: "Bearer " + localStorage.token },
+				},
+			);
+			this.activities = await response.json();
+		},
 	},
 });
 </script>
@@ -18,12 +34,7 @@ export default Vue.extend({
 	<div class="wrapper">
 		<h1 class="text-h3 mt-4 mb-4">Deine Aktivitäten</h1>
 		<v-row>
-			<v-col
-				cols="12"
-				sm="6"
-				v-for="activity in user.created_activities"
-				:key="activity.id"
-			>
+			<v-col cols="12" sm="6" v-for="activity in activities" :key="activity.id">
 				<v-card class="mx-auto">
 					<v-card-title> {{ activity.title }} </v-card-title>
 					<v-card-subtitle> {{ activity.description }} </v-card-subtitle>
@@ -75,6 +86,6 @@ export default Vue.extend({
 				</v-card>
 			</v-col>
 		</v-row>
-		<CreateActivityDialog />
+		<CreateActivityDialog @done="fetchActivities" />
 	</div>
 </template>

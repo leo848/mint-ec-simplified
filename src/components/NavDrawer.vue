@@ -68,7 +68,7 @@ export default Vue.extend({
 		<v-divider />
 
 		<v-list nav>
-			<v-list-item link>
+			<v-list-item to="/account" link>
 				<v-list-item-icon>
 					<v-icon>mdi-account</v-icon>
 				</v-list-item-icon>

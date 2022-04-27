@@ -3,17 +3,10 @@ import Vue from "vue";
 
 export default Vue.extend({
 	name: "NavBar",
-	data: () => ({
-		navItems: [
-			{ title: "Dashboard", icon: "mdi-view-dashboard" },
-			{ title: "Entdecken", icon: "mdi-compass" },
-			{ title: "Aktivitäten", icon: "mdi-format-list-bulleted-square" },
-		],
-	}),
-	props: {
-		title: String,
+	data: () => ({}),
+	created() {
+		console.log(this.$route);
 	},
-
 	methods: {
 		logout() {
 			localStorage.removeItem("token");
@@ -27,6 +20,6 @@ export default Vue.extend({
 		<v-app-bar-nav-icon
 			@click="$emit('drawerVisibilityToggle')"
 		></v-app-bar-nav-icon>
-		<v-toolbar-title>{{ title }}</v-toolbar-title>
+		<v-toolbar-title>{{ $route.meta.title }}</v-toolbar-title>
 	</v-app-bar>
 </template>

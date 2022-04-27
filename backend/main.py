@@ -73,6 +73,12 @@ def login(data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
 def read_authenticated_user(user=Depends(manager)):
     return user
 
+# Student methods
+# Read own activities
+@app.get("/student/activities/", response_model=list[schemas.Activity])
+def get_student_activities(user=Depends(manager), db: Session = Depends(get_db)):
+    return user.created_activities
+
 
 # User CRUD methods
 @app.get("/users/", response_model=list[schemas.User])

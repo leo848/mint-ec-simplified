@@ -19,39 +19,6 @@ class Tag(TagBase):
     class Config:
         orm_mode = True
 
-
-# Activity models
-class ActivityBase(BaseModel):
-    title: str
-    description: Optional[str] = None
-    website: Optional[str] = None
-
-    category_id: int
-
-
-class ActivityCreate(ActivityBase):
-    tags: list[str] = []
-    date: str
-
-class ActivityDBCreate(ActivityBase):
-    tags: list[Tag] = []
-    date: datetime.date
-    created_by_id: int
-
-
-
-class Activity(ActivityDBCreate):
-    id: int
-
-    reviewed_by_id: Optional[int] = None
-    review_status: int = 0
-
-    score: Optional[int] = None
-
-    class Config:
-        orm_mode = True
-
-
 # User models
 class UserBase(BaseModel):
     first_name: str
@@ -73,9 +40,41 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
-    created_activities: Optional[list[Activity]] = None
-    reviewed_activities: Optional[list[Activity]] = None
 
+    class Config:
+        orm_mode = True
+
+
+
+# Activity models
+class ActivityBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    website: Optional[str] = None
+
+    category_id: int
+
+
+class ActivityCreate(ActivityBase):
+    tags: list[str] = []
+    date: str
+
+class ActivityDBCreate(ActivityBase):
+    tags: list[Tag] = []
+    date: datetime.date
+    # created_by_id: int
+    created_by: User
+
+
+
+class Activity(ActivityDBCreate):
+    id: int
+
+    # reviewed_by_id: Optional[int] = None
+    reviewed_by: Optional[User] = None
+    review_status: int = 0
+
+    score: Optional[int] = None
 
     class Config:
         orm_mode = True
