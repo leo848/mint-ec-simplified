@@ -19,9 +19,12 @@ export default Vue.extend({
 	},
 	methods: {
 		async fetchUser() {
-			let response = await fetch(process.env.VUE_APP_BACKEND_ROOT + "/me", {
-				headers: { Authorization: "Bearer " + localStorage.token },
-			});
+			let response = await fetch(
+				process.env.VUE_APP_BACKEND_ROOT + "/user/me",
+				{
+					headers: { Authorization: "Bearer " + localStorage.token },
+				},
+			);
 			this.user = await response.json();
 			this.data = { ...this.data, ...this.user };
 			console.log(this.data);
@@ -41,7 +44,7 @@ export default Vue.extend({
 <template>
 	<div class="wrapper">
 		<h1 class="text-h3 mt-4 mb-4">Dein Account</h1>
-		<v-card>
+		<v-card :loading="loading" max-width="700px">
 			<v-card-title>
 				<span class="text-h5">Account-Informationen bearbeiten</span>
 			</v-card-title>
@@ -49,8 +52,29 @@ export default Vue.extend({
 				<v-form v-model="valid">
 					<v-container>
 						<v-row>
-							<v-col cols="12" sm="4">
+							<v-col cols="12">
 								<v-text-field label="Anzeigename" v-model="data.display_name" />
+							</v-col>
+							<v-col cols="6">
+								<v-text-field
+									label="Vorname"
+									v-model="data.first_name"
+									disabled
+								/>
+							</v-col>
+							<v-col cols="6">
+								<v-text-field
+									label="Nachname"
+									v-model="data.last_name"
+									disabled
+								/>
+							</v-col>
+							<v-col cols="12">
+								<v-text-field
+									label="E-Mail-Adresse"
+									v-model="data.email"
+									disabled
+								/>
 							</v-col>
 						</v-row>
 					</v-container>

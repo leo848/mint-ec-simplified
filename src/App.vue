@@ -11,9 +11,12 @@ export default Vue.extend({
 		appTitle: "Dashboard",
 	}),
 	async created() {
-		const response = await fetch(process.env.VUE_APP_BACKEND_ROOT + "/me/", {
-			headers: { Authorization: "Bearer " + localStorage.token },
-		});
+		const response = await fetch(
+			process.env.VUE_APP_BACKEND_ROOT + "/user/me/",
+			{
+				headers: { Authorization: "Bearer " + localStorage.token },
+			},
+		);
 		if (!response.ok) this.$router.push("/login");
 	},
 	components: { NavDrawer, NavBar },

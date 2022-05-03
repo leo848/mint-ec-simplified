@@ -95,6 +95,7 @@ export default Vue.extend({
 									label="Passwort"
 									v-model="data.password"
 									:rules="rules.password"
+									@keyup.enter="login"
 									type="password"
 									required
 								/>

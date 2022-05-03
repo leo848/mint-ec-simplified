@@ -1,6 +1,8 @@
 import datetime
 from os import environ
 
+from datetime import timedelta
+
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
 
@@ -20,7 +22,7 @@ load_dotenv()
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-manager = LoginManager(environ["LOGIN_SECRET"], "/login")
+manager = LoginManager(environ["LOGIN_SECRET"], "/login", default_expiry=timedelta(hours=2))
 
 origins = [
     *environ["DEV_FRONTEND_URL"].split(","),
@@ -47,7 +49,7 @@ def get_db():
 
 # User query
 @manager.user_loader()
-def query_user(user_email: str):
+def query_user(user_email: str, db: Session = Depends(get_db)):
     db = next(get_db())
     return crud.get_user_by_email(db, user_email)
 
@@ -69,7 +71,7 @@ def login(data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
 
 
 # Get info about authenticated user
-@app.get("/me/", response_model=schemas.User)
+@app.get("/user/me/", response_model=schemas.User)
 def read_authenticated_user(user=Depends(manager)):
     return user
 
