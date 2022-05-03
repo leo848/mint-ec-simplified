@@ -59,6 +59,9 @@ def create_activity(db: Session, activity: schemas.ActivityDBCreate):
     db.refresh(new_activity)
     return new_activity
 
+def delete_activity(db: Session, activity_id: int):
+    db.query(models.Activity).filter(models.Activity.id == activity_id).delete()
+    db.commit()
 
 # Category methods
 
@@ -75,12 +78,15 @@ def create_category(db: Session, category: schemas.CategoryCreate):
     db.refresh(new_category)
     return new_category
 
+def delete_category(db: Session, category_id: int):
+    db.query(models.Category).filter(models.Category.id == category_id).delete()
+    db.commit()
 
 
 # Tag methods
 
 def get_tag(db: Session, tag_id: int):
-    return db.query(models.Tag).filter(models.Category.id == tag_id).first()
+    return db.query(models.Tag).filter(models.Tag.id == tag_id).first()
 
 def get_tags(db: Session, skip: int = 0, limit: int=100):
     return db.query(models.Tag).offset(skip).limit(limit).all()
@@ -91,3 +97,7 @@ def create_tag(db: Session, tag: schemas.TagCreate):
     db.commit()
     db.refresh(new_tag)
     return new_tag
+
+def delete_tag(db: Session, tag_id: int):
+    db.query(models.Tag).filter(models.Tag.id == tag_id).delete()
+    db.commit()

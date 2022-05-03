@@ -34,10 +34,23 @@ export default Vue.extend({
 	<div class="wrapper">
 		<h1 class="text-h3 mt-4 mb-4">Deine Aktivitäten</h1>
 		<v-row>
-			<v-col cols="12" sm="6" v-for="activity in activities" :key="activity.id">
-				<v-card class="mx-auto">
+			<v-col
+				cols="12"
+				sm="6"
+				xl="4"
+				v-for="activity in activities"
+				:key="activity.id"
+			>
+				<v-card class="mx-auto" dense>
 					<v-card-title> {{ activity.title }} </v-card-title>
-					<v-card-subtitle> {{ activity.description }} </v-card-subtitle>
+					<v-card-subtitle> {{ activity.category.title }} </v-card-subtitle>
+					<v-card-text>
+						<v-chip-group>
+							<v-chip disabled v-for="tag in activity.tags" :key="tag.id">
+								{{ tag.title }}
+							</v-chip>
+						</v-chip-group>
+					</v-card-text>
 					<v-card-actions>
 						<v-tooltip bottom>
 							<template v-slot:activator="{ on, attrs }">

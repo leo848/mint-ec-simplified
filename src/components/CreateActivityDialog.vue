@@ -65,7 +65,7 @@ export default Vue.extend({
 			};
 			console.log(JSON.stringify(data));
 			const response = await fetch(
-				process.env.VUE_APP_BACKEND_ROOT + "/activities/",
+				process.env.VUE_APP_BACKEND_ROOT + "/student/activities/",
 				{
 					method: "POST",
 					headers: {
@@ -86,7 +86,6 @@ export default Vue.extend({
 						"Ein unbekannter Fehler ist aufgetreten. Überprüfe die Konsole für Details.";
 				return;
 			}
-			localStorage.setItem("token", (await response.json()).access_token);
 			this.show = false;
 			this.$emit("done");
 		},

@@ -18,6 +18,10 @@ export default Vue.extend({
 		this.loading = false;
 	},
 	methods: {
+		logout() {
+			localStorage.removeItem("token");
+			this.$router.replace("/login");
+		},
 		async fetchUser() {
 			let response = await fetch(
 				process.env.VUE_APP_BACKEND_ROOT + "/user/me",
@@ -44,7 +48,8 @@ export default Vue.extend({
 <template>
 	<div class="wrapper">
 		<h1 class="text-h3 mt-4 mb-4">Dein Account</h1>
-		<v-card :loading="loading" max-width="700px">
+		<v-btn color="primary" x-large @click="logout"> Ausloggen </v-btn>
+		<v-card :loading="loading" max-width="700px" class="mt-4">
 			<v-card-title>
 				<span class="text-h5">Account-Informationen bearbeiten</span>
 			</v-card-title>

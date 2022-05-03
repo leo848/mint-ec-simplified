@@ -45,6 +45,21 @@ class User(UserBase):
         orm_mode = True
 
 
+# Category models
+class CategoryBase(BaseModel):
+    title: str
+    description: str
+
+
+class CategoryCreate(CategoryBase):
+    pass
+
+
+class Category(CategoryBase):
+    id: int
+
+    class Config:
+        orm_mode = True
 
 # Activity models
 class ActivityBase(BaseModel):
@@ -70,6 +85,7 @@ class ActivityDBCreate(ActivityBase):
 class Activity(ActivityDBCreate):
     id: int
 
+    category: Category
     # reviewed_by_id: Optional[int] = None
     reviewed_by: Optional[User] = None
     review_status: int = 0
@@ -80,21 +96,6 @@ class Activity(ActivityDBCreate):
         orm_mode = True
 
 
-# Category models
-class CategoryBase(BaseModel):
-    title: str
-    description: str
-
-
-class CategoryCreate(CategoryBase):
-    pass
-
-
-class Category(CategoryBase):
-    id: int
-
-    class Config:
-        orm_mode = True
 
 
 # Other models

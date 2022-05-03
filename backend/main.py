@@ -1,7 +1,6 @@
 import datetime
-from os import environ
-
 from datetime import timedelta
+from os import environ
 
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
@@ -10,7 +9,7 @@ import crud
 import models
 import schemas
 from database import SessionLocal, engine
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Security
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_login import LoginManager
@@ -22,7 +21,9 @@ load_dotenv()
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-manager = LoginManager(environ["LOGIN_SECRET"], "/login", default_expiry=timedelta(hours=2))
+manager = LoginManager(
+    environ["LOGIN_SECRET"], "/login", default_expiry=timedelta(hours=2)
+)
 
 origins = [
     *environ["DEV_FRONTEND_URL"].split(","),
@@ -66,7 +67,12 @@ def login(data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
     p = PasswordHasher(salt_size=63)
     if not p.verify_password(password, user.password_hash, user.salt):
         raise InvalidCredentialsException
-    access_token = manager.create_access_token(data={"sub": email})
+    scopes = []
+    if user.role >= 1:
+        scopes.append("teacher")
+    if user.role >= 2:
+        scopes.append("admin")
+    access_token = manager.create_access_token(data={"sub": email}, scopes=scopes)
     return {"access_token": access_token}
 
 
@@ -75,11 +81,70 @@ def login(data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
 def read_authenticated_user(user=Depends(manager)):
     return user
 
-# Student methods
+
+###################
+# Student methods #
+###################
+
 # Read own activities
 @app.get("/student/activities/", response_model=list[schemas.Activity])
-def get_student_activities(user=Depends(manager), db: Session = Depends(get_db)):
+def student_get_activities(user=Depends(manager), db: Session = Depends(get_db)):
     return user.created_activities
+
+# Create activity
+@app.post("/student/activities/", response_model=schemas.Activity)
+def student_create_activity(
+    activity: schemas.ActivityCreate,
+    user=Depends(manager),
+    db: Session = Depends(get_db),
+):
+    activity = activity.dict()
+    activity["created_by_id"] = user.id
+    year, month, day = [int(i) for i in activity["date"].split("-")]
+    activity["date"] = datetime.date(year, month, day)
+    for index, tag in enumerate(activity["tags"]):
+        db_tag = db.query(models.Tag).filter(models.Tag.title == tag).first()
+        if not db_tag:
+            db_tag = crud.create_tag(db, tag=schemas.TagCreate(title=tag))
+        activity["tags"][index] = db_tag
+
+    new_activity = models.Activity(**activity)
+    db.commit()
+    db.refresh(new_activity)
+
+    return new_activity
+
+###################
+# Teacher methods #
+###################
+
+# Read all activities
+@app.get("/teacher/activities/", response_model=list[schemas.Activity])
+def read_activities(
+    user=Security(manager, scopes=["teacher"]),
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
+    return crud.get_activities(db, skip=skip, limit=limit)
+
+# Review an activity and either accept or reject it.
+@app.post("/teacher/review/", response_model=schemas.Activity)
+def review_activity(review: schemas.ActivityReview, db: Session = Depends(get_db)):
+    query = db.query(models.Activity).filter(models.Activity.id == review.activity_id)
+    activity = query.first()
+    if not activity:
+        raise HTTPException(status_code=400, detail="Activity not found.")
+
+    query.update(
+        {
+            "reviewed_by_id": review.teacher_id if review.status else None,
+            "review_status": review.status,
+        }
+    )
+    db.commit()
+    db.refresh(activity)
+    return activity
 
 
 # User CRUD methods
@@ -116,38 +181,10 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     crud.delete_user(db, user_id)
 
 
-# Activity CRUD methods
-@app.get("/activities/", response_model=list[schemas.Activity])
-def read_activities(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return crud.get_activities(db, skip=skip, limit=limit)
-
-
 @app.get("/activities/{activity_id}/", response_model=schemas.Activity)
 def read_activity(activity_id: int):
     return crud.get_activity(db, activity_id=activity_id)
 
-
-@app.post("/activities/", response_model=schemas.Activity)
-def create_activity(
-    activity: schemas.ActivityCreate,
-    user=Depends(manager),
-    db: Session = Depends(get_db),
-):
-    activity = activity.dict()
-    activity["created_by_id"] = user.id
-    year, month, day = [int(i) for i in activity["date"].split("-")]
-    activity["date"] = datetime.date(year, month, day)
-    for index, tag in enumerate(activity["tags"]):
-        db_tag = db.query(models.Tag).filter(models.Tag.title == tag).first()
-        if not db_tag:
-            db_tag = crud.create_tag(db, tag=schemas.TagCreate(title=tag))
-        activity["tags"][index] = db_tag
-
-    new_activity = models.Activity(**activity)
-    db.commit()
-    db.refresh(new_activity)
-
-    return new_activity
 
 
 # Category CRUD methods
@@ -192,20 +229,3 @@ def create_tag(tag: schemas.TagCreate, db: Session = Depends(get_db)):
     return crud.create_tag(db, tag=tag)
 
 
-# (As a teacher) review an activity and either accept or reject it.
-@app.post("/review_activity", response_model=schemas.Activity)
-def review_activity(review: schemas.ActivityReview, db: Session = Depends(get_db)):
-    query = db.query(models.Activity).filter(models.Activity.id == review.activity_id)
-    activity = query.first()
-    if not activity:
-        raise HTTPException(status_code=400, detail="Activity not found.")
-
-    query.update(
-        {
-            "reviewed_by_id": review.teacher_id if review.status else None,
-            "review_status": review.status,
-        }
-    )
-    db.commit()
-    db.refresh(activity)
-    return activity

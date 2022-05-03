@@ -1,4 +1,13 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, SmallInteger, String, Table, Date
+from sqlalchemy import (
+    Boolean,
+    Column,
+    ForeignKey,
+    Integer,
+    SmallInteger,
+    String,
+    Table,
+    Date,
+)
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -19,12 +28,15 @@ class Activity(Base):
 
     date = Column(Date, nullable=False)
 
-
     created_by_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    created_by = relationship("User", back_populates="created_activities", foreign_keys=[created_by_id])
+    created_by = relationship(
+        "User", back_populates="created_activities", foreign_keys=[created_by_id]
+    )
 
     reviewed_by_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-    reviewed_by = relationship("User", back_populates="reviewed_activities", foreign_keys=[reviewed_by_id])
+    reviewed_by = relationship(
+        "User", back_populates="reviewed_activities", foreign_keys=[reviewed_by_id]
+    )
 
     review_status = Column(SmallInteger, default=0)
 
@@ -59,8 +71,12 @@ class User(Base):
 
     role = Column(Integer, nullable=False)
 
-    created_activities = relationship("Activity", back_populates="created_by", foreign_keys=[Activity.created_by_id])
-    reviewed_activities = relationship("Activity", back_populates="reviewed_by", foreign_keys=[Activity.reviewed_by_id])
+    created_activities = relationship(
+        "Activity", back_populates="created_by", foreign_keys=[Activity.created_by_id]
+    )
+    reviewed_activities = relationship(
+        "Activity", back_populates="reviewed_by", foreign_keys=[Activity.reviewed_by_id]
+    )
 
 
 class Category(Base):
