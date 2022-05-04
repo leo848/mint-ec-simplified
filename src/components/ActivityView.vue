@@ -6,8 +6,30 @@ export default Vue.extend({
 	name: "ActivityView",
 	data: () => ({
 		user: {},
-		activities: [],
+		activities: [] as { [key: string]: any }[],
 		loading: false,
+		unfilteredOverviewItems: [
+			{
+				title: "Gesamte Aktivitäten",
+				color: "blue",
+				value: "total",
+			},
+			{
+				title: "davon angenommen",
+				color: "green",
+				value: "accepted",
+			},
+			{
+				title: "davon unbearbeitet",
+				color: null,
+				value: "other",
+			},
+			{
+				title: "davon abgelehnt",
+				color: "red",
+				value: "rejected",
+			},
+		],
 	}),
 	components: { CreateActivityDialog },
 	async created() {
@@ -27,6 +49,19 @@ export default Vue.extend({
 			this.activities = await response.json();
 		},
 	},
+	computed: {
+		activityOverview() {
+			return {
+				total: this.activities.length,
+				accepted: this.activities.filter((a) => a.review_status === 1).length,
+				rejected: this.activities.filter((a) => a.review_status === -1).length,
+				other: this.activities.filter((a) => a.review_status === 0).length,
+			} as { [key: string]: any };
+		},
+		overviewItems() {
+			return this.unfilteredOverviewItems; // TODO: filter mechanism
+		},
+	},
 });
 </script>
 
@@ -34,6 +69,25 @@ export default Vue.extend({
 	<div class="wrapper">
 		<h1 class="text-h3 mt-4 mb-4">Deine Aktivitäten</h1>
 		<v-row>
+			<v-col cols="12">
+				<v-card
+					><v-card-title class="text-h4 justify-center">Übersicht</v-card-title
+					><v-card-text>
+						<v-row>
+							<v-col v-for="(card, i) in overviewItems" :key="i">
+								<v-card :color="card.color">
+									<v-card-title class="text-h2 justify-center">{{
+										activityOverview[card.value]
+									}}</v-card-title>
+									<v-card-subtitle class="text-h6 text-center">{{
+										card.title
+									}}</v-card-subtitle>
+								</v-card>
+							</v-col>
+						</v-row>
+					</v-card-text></v-card
+				>
+			</v-col>
 			<v-col
 				cols="12"
 				sm="6"
