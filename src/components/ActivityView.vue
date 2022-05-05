@@ -21,7 +21,7 @@ export default Vue.extend({
 			},
 			{
 				title: "davon unbearbeitet",
-				color: null,
+				color: "secondary",
 				value: "other",
 			},
 			{
@@ -59,7 +59,8 @@ export default Vue.extend({
 			} as { [key: string]: any };
 		},
 		overviewItems() {
-			return this.unfilteredOverviewItems; // TODO: filter mechanism
+			let overview = this.activityOverview as { [key: string]: any };
+			return this.unfilteredOverviewItems.filter((o) => overview[o.value]);
 		},
 	},
 });
@@ -75,7 +76,7 @@ export default Vue.extend({
 					><v-card-text>
 						<v-row>
 							<v-col v-for="(card, i) in overviewItems" :key="i">
-								<v-card :color="card.color">
+								<v-card :color="card.color" :loading="loading">
 									<v-card-title class="text-h2 justify-center">{{
 										activityOverview[card.value]
 									}}</v-card-title>
