@@ -7,7 +7,7 @@ export default Vue.extend({
 	data: () => ({
 		user: {},
 		activities: [] as { [key: string]: any }[],
-		loading: false,
+		loading: true,
 		unfilteredOverviewItems: [
 			{
 				title: "Gesamte Aktivitäten",
@@ -40,6 +40,7 @@ export default Vue.extend({
 	},
 	methods: {
 		async fetchActivities() {
+			this.loading = true;
 			let response = await fetch(
 				process.env.VUE_APP_BACKEND_ROOT + "/student/activities/",
 				{
@@ -47,6 +48,7 @@ export default Vue.extend({
 				},
 			);
 			this.activities = await response.json();
+			this.loading = false;
 		},
 	},
 	computed: {
@@ -71,7 +73,7 @@ export default Vue.extend({
 		<h1 class="text-h3 mt-4 mb-4">Deine Aktivitäten</h1>
 		<v-row>
 			<v-col cols="12">
-				<v-card
+				<v-card v-if="!loading"
 					><v-card-title class="text-h4 justify-center">Übersicht</v-card-title
 					><v-card-text>
 						<v-row>
@@ -88,6 +90,7 @@ export default Vue.extend({
 						</v-row>
 					</v-card-text></v-card
 				>
+				<v-skeleton-loader v-else type="image" />
 			</v-col>
 			<v-col
 				cols="12"
