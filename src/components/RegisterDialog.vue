@@ -6,6 +6,9 @@ export default Vue.extend({
 
 	data: () => ({
 		show: false,
+		loading: false,
+		error: false,
+		errorMsg: "",
 		data: {
 			firstName: null as null | string,
 			lastName: null as null | string,
@@ -67,6 +70,56 @@ export default Vue.extend({
 				},
 			};
 		},
+		async register() {
+			this.loading = true;
+			this.error = false;
+			const body = JSON.stringify({
+				first_name: this.data.firstName,
+				last_name: this.data.lastName,
+				display_name: this.data.displayName,
+				email: this.data.email,
+				password: this.data.password,
+				grade:
+					{ EF: 10, Q1: 11, Q2: 12 }[this.data.grade as string] ||
+					this.data.grade,
+				cls: this.data.classChar,
+			});
+			const response = await fetch(
+				process.env.VUE_APP_BACKEND_ROOT + "/register/",
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: body,
+				},
+			);
+			if (!response.ok) {
+				this.error = true;
+				if (response.status == 400) {
+					this.errorMsg = "Registrierung nicht erlaubt oder falsches Token";
+				} else if (response.status == 500) {
+					this.errorMsg =
+						"Ein Serverfehler ist aufgetreten, bitte versuche es später erneut.";
+				} else
+					this.errorMsg =
+						"Ein unbekannter Fehler ist aufgetreten. Überprüfe die Konsole für Details.";
+				return;
+			}
+			const loginResponse = await fetch(
+				process.env.VUE_APP_BACKEND_ROOT + "/login/",
+				{
+					method: "POST",
+					headers: { "content-type": "application/x-www-form-urlencoded" },
+					body: new URLSearchParams({
+						username: this.data.email as string,
+						password: this.data.password as string,
+					}).toString(),
+				},
+			);
+			localStorage.setItem("token", (await response.json()).access_token);
+			this.show = false;
+			this.loading = false;
+			this.$emit("done");
+		},
 	},
 });
 </script>
@@ -86,6 +139,7 @@ export default Vue.extend({
 			</v-btn>
 		</template>
 		<v-card>
+			<v-alert v-if="error" dismissible type="error">{{ errorMsg }}</v-alert>
 			<v-card-title>
 				<span class="text-h5">Registrieren</span>
 			</v-card-title>
@@ -185,11 +239,7 @@ export default Vue.extend({
 				<v-btn color="blue darken-1" text @click="show = false"
 					>Abbrechen</v-btn
 				>
-				<v-btn
-					color="blue darken-1"
-					:disabled="!valid"
-					text
-					@click="show = false"
+				<v-btn color="blue darken-1" :disabled="!valid" text @click="register"
 					>Registrieren</v-btn
 				>
 			</v-card-actions>

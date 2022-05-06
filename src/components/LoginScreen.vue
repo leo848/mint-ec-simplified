@@ -52,7 +52,7 @@ export default Vue.extend({
 				<h2 class="subheading mb-8">Bitte logge dich ein, um fortzufahren.</h2>
 				<v-row align="center" justify="center">
 					<LoginDialog @done="login" />
-					<RegisterDialog />
+					<RegisterDialog @done="login" />
 				</v-row>
 			</v-col>
 		</v-row>

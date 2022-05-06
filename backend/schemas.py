@@ -30,7 +30,7 @@ class UserBase(BaseModel):
     grade: Optional[int] = None
     cls: Optional[str] = None
 
-    role: int = 0
+    role: Optional[int] = 0
 
 
 class UserCreate(UserBase):

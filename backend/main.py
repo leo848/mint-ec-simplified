@@ -76,6 +76,24 @@ def login(data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
     return {"access_token": access_token}
 
 
+# Register method
+@app.post("/register/")
+def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    if user.role != 0:
+        if not user.register_token:
+            raise HTTPException(
+                status_code=400,
+                detail="Tried to register as a teacher, yet no token given",
+            )
+        if user.register_token != environ["REGISTER_TEACHER_SECRET"]:
+            raise HTTPException(status_code=400, detail="Wrong teacher token")
+    del user.register_token
+    return crud.create_user(db=db, user=user)
+
+
 # Get info about authenticated user
 @app.get("/user/me/", response_model=schemas.User)
 def read_authenticated_user(user=Depends(manager)):
@@ -90,6 +108,7 @@ def read_authenticated_user(user=Depends(manager)):
 @app.get("/student/activities/", response_model=list[schemas.Activity])
 def student_get_activities(user=Depends(manager), db: Session = Depends(get_db)):
     return user.created_activities
+
 
 # Create activity
 @app.post("/student/activities/", response_model=schemas.Activity)
@@ -114,6 +133,7 @@ def student_create_activity(
 
     return new_activity
 
+
 ###################
 # Teacher methods #
 ###################
@@ -127,6 +147,7 @@ def read_activities(
     db: Session = Depends(get_db),
 ):
     return crud.get_activities(db, skip=skip, limit=limit)
+
 
 # Review an activity and either accept or reject it.
 @app.post("/teacher/review/", response_model=schemas.Activity)
@@ -159,23 +180,6 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return crud.get_user(db, user_id=user_id)
 
 
-@app.post("/users/", response_model=schemas.User)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db, email=user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    if user.role != 0:
-        if not user.register_token:
-            raise HTTPException(
-                status_code=400,
-                detail="Tried to register as a teacher, yet no token given",
-            )
-        if user.register_token != environ["REGISTER_TEACHER_SECRET"]:
-            raise HTTPException(status_code=400, detail="Wrong teacher token")
-    del user.register_token
-    return crud.create_user(db=db, user=user)
-
-
 @app.delete("/users/{user_id}/", status_code=204)
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     crud.delete_user(db, user_id)
@@ -184,7 +188,6 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
 @app.get("/activities/{activity_id}/", response_model=schemas.Activity)
 def read_activity(activity_id: int):
     return crud.get_activity(db, activity_id=activity_id)
-
 
 
 # Category CRUD methods
@@ -227,5 +230,3 @@ def read_tag(tag_id: int):
 @app.post("/tags/", response_model=schemas.Tag)
 def create_tag(tag: schemas.TagCreate, db: Session = Depends(get_db)):
     return crud.create_tag(db, tag=tag)
-
-
