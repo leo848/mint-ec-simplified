@@ -1,8 +1,3 @@
-<template>
-	<StudentView v-if="user.role === 0" />
-	<TeacherView v-else-if="user.role === 1" />
-</template>
-
 <script>
 import StudentView from "@/components/StudentView.vue";
 import TeacherView from "@/components/TeacherView.vue";
@@ -22,3 +17,8 @@ export default {
 	},
 };
 </script>
+
+<template>
+	<StudentView v-if="user.role === 0" />
+	<TeacherView v-else-if="user.role === 1" />
+</template>
