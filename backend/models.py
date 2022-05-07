@@ -1,17 +1,8 @@
-from sqlalchemy import (
-    Boolean,
-    Column,
-    ForeignKey,
-    Integer,
-    SmallInteger,
-    String,
-    Table,
-    Date,
-)
+from sqlalchemy import (Boolean, Column, Date, ForeignKey, Integer,
+                        SmallInteger, String, Table)
 from sqlalchemy.orm import relationship
 
 from database import Base
-
 
 tag_association_table = Table(
     "association",

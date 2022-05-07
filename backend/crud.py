@@ -1,8 +1,8 @@
-from pypbkdf2 import PyPBKDF2 as PasswordHasher
 from sqlalchemy.orm import Session
 
-import models, schemas
-
+import models
+import schemas
+from pypbkdf2 import PyPBKDF2 as PasswordHasher
 
 
 # User methods

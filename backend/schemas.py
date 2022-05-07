@@ -1,7 +1,22 @@
-from typing import Optional
 import datetime
+from typing import Optional
 
 from pydantic import BaseModel, validator
+from pydantic.main import ModelMetaclass
+
+
+# metaclass making every class optional
+class AllOptional(ModelMetaclass):
+    def __new__(self, name, bases, namespaces, **kwargs):
+        annotations = namespaces.get('__annotations__', {})
+        for base in bases:
+            annotations.update(base.__annotations__)
+        for field in annotations:
+            if not field.startswith('__'):
+                annotations[field] = Optional[annotations[field]]
+        namespaces['__annotations__'] = annotations
+        return super().__new__(self, name, bases, namespaces, **kwargs)
+
 
 # Tag models
 class TagBase(BaseModel):
@@ -14,7 +29,7 @@ class TagCreate(TagBase):
 
 
 class Tag(TagBase):
-    # activities: list[Activity] = [] # cross-referential problem, no solution yet FIXME
+    pass
 
     class Config:
         orm_mode = True
@@ -37,12 +52,15 @@ class UserCreate(UserBase):
     password: str
     register_token: Optional[str] = None
 
+class UserUpdate(UserBase, metaclass=AllOptional):
+    pass
 
 class User(UserBase):
     id: int
 
     class Config:
         orm_mode = True
+
 
 
 # Category models
