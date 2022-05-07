@@ -21,6 +21,7 @@ export default Vue.extend({
 	},
 	props: {
 		visible: Boolean,
+		role: Number,
 	},
 	computed: {
 		navModel: {
@@ -30,6 +31,12 @@ export default Vue.extend({
 			set(value: boolean) {
 				this.$emit("update:visible", value);
 			},
+		},
+
+		subtitle(): string {
+			return ["Schüleransicht", "Lehreransicht", "Adminansicht"][
+				(this.role as number) || 0
+			];
 		},
 	},
 });
@@ -42,7 +49,7 @@ export default Vue.extend({
 				<v-list-item-title class="text-h5">
 					mint-ec-simplified
 				</v-list-item-title>
-				<v-list-item-subtitle> subtext </v-list-item-subtitle>
+				<v-list-item-subtitle> {{ subtitle }} </v-list-item-subtitle>
 			</v-list-item-content>
 		</v-list-item>
 

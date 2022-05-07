@@ -115,7 +115,7 @@ export default Vue.extend({
 					}).toString(),
 				},
 			);
-			localStorage.setItem("token", (await response.json()).access_token);
+			localStorage.setItem("token", (await loginResponse.json()).access_token);
 			this.show = false;
 			this.loading = false;
 			this.$emit("done");

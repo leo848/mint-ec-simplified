@@ -9,6 +9,7 @@ export default Vue.extend({
 	data: () => ({
 		drawerVisible: true,
 		appTitle: "Dashboard",
+		user: {},
 	}),
 	async created() {
 		const response = await fetch(
@@ -18,6 +19,7 @@ export default Vue.extend({
 			},
 		);
 		if (!response.ok) this.$router.push("/login");
+		this.user = await response.json();
 	},
 	components: { NavDrawer, NavBar },
 });
@@ -32,6 +34,7 @@ export default Vue.extend({
 			<NavDrawer
 				v-if="$router.history.current.name !== 'login'"
 				:visible="drawerVisible"
+				:role="user.role"
 				@update:visible="(v) => (drawerVisible = v)"
 			/>
 			<v-main>

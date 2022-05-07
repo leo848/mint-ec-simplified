@@ -4,9 +4,6 @@ import Vue from "vue";
 export default Vue.extend({
 	name: "NavBar",
 	data: () => ({}),
-	created() {
-		console.log(this.$route);
-	},
 	methods: {
 		logout() {
 			localStorage.removeItem("token");

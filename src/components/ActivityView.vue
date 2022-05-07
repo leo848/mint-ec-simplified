@@ -62,7 +62,9 @@ export default Vue.extend({
 		},
 		overviewItems() {
 			let overview = this.activityOverview as { [key: string]: any };
-			return this.unfilteredOverviewItems.filter((o) => overview[o.value]);
+			return this.unfilteredOverviewItems.filter(
+				(o, i) => overview[o.value] || !i,
+			);
 		},
 	},
 });
