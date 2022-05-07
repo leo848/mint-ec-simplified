@@ -87,6 +87,8 @@ export default Vue.extend({
 									label="E-Mail-Adresse"
 									v-model="data.email"
 									:rules="rules.email"
+									class="mb-n4"
+									outlined
 									required
 								></v-text-field>
 							</v-col>
@@ -97,6 +99,7 @@ export default Vue.extend({
 									:rules="rules.password"
 									@keyup.enter="login"
 									type="password"
+									outlined
 									required
 								/>
 							</v-col>
