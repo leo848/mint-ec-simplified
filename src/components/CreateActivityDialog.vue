@@ -277,6 +277,7 @@ export default Vue.extend({
 									item-text="title"
 									item-value="id"
 									label="Tags"
+									@click="fetchRequiredData"
 									chips
 									multiple
 								/>
