@@ -142,11 +142,19 @@ def student_create_activity(
 @app.get("/teacher/activities/", response_model=list[schemas.Activity])
 def read_activities(
     user=Security(manager, scopes=["teacher"]),
-    skip: int = 0,
-    limit: int = 100,
     db: Session = Depends(get_db),
 ):
-    return crud.get_activities(db, skip=skip, limit=limit)
+    return crud.get_activities(db)
+
+
+@app.get("/teacher/students/", response_model=list[schemas.User])
+def read_students(user=Security(manager, scopes=["teacher"]), db: Session = Depends(get_db)):
+    return (
+        db.query(models.User)
+        .filter(models.User.role == 0)
+        .order_by(models.User.cls, models.User.grade)
+        .all()
+    )
 
 
 # Review an activity and either accept or reject it.
