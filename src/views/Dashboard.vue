@@ -1,6 +1,6 @@
 <script>
-import StudentView from "@/components/StudentView.vue";
-import TeacherView from "@/components/TeacherView.vue";
+import StudentView from "@/components/Student/Dashboard.vue";
+import TeacherView from "@/components/Teacher/Dashboard.vue";
 
 export default {
 	name: "HomeView",

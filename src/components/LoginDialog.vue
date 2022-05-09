@@ -16,7 +16,7 @@ export default Vue.extend({
 				(v: string) => !!v || "Bitte gib eine E-Mail-Adresse ein.",
 				(v: string) => /.+@.+/.test(v) || "Keine gültige E-Mail-Adresse.",
 				(v: string) =>
-					/.{2,50}\..{2,50}@gymnasium-essen-werden.de/.test(v) ||
+					/.{1,50}\..{2,50}@gymnasium-essen-werden.de/.test(v) ||
 					"Keine gültige GEW-E-Mail-Adresse.",
 			],
 			password: [(v: string) => !!v || "Bitte gib ein Passwort ein"],

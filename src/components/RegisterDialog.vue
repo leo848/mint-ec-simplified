@@ -9,6 +9,16 @@ export default Vue.extend({
 		loading: false,
 		error: false,
 		errorMsg: "",
+		roles: [
+			{
+				text: "Schüler",
+				value: 0,
+			},
+			{
+				text: "Lehrer",
+				value: 1,
+			},
+		],
 		data: {
 			firstName: null as null | string,
 			lastName: null as null | string,
@@ -16,6 +26,8 @@ export default Vue.extend({
 			email: null as null | string,
 			password: null as null | string,
 			passwordRepeat: null as null | string,
+			role: 0,
+			token: null as null | string,
 			grade: null as null | string,
 			classChar: null as null | string,
 		},
@@ -25,7 +37,7 @@ export default Vue.extend({
 				(v: string) => !!v || "Bitte gib eine E-Mail-Adresse ein.",
 				(v: string) => /.+@.+/.test(v) || "Keine gültige E-Mail-Adresse.",
 				(v: string) =>
-					/.{2,50}\..{2,50}@gymnasium-essen-werden.de/.test(v) ||
+					/.{1,50}\..{2,50}@gymnasium-essen-werden.de/.test(v) ||
 					"Keine gültige GEW-E-Mail-Adresse.",
 			],
 			name: [
@@ -79,9 +91,12 @@ export default Vue.extend({
 				display_name: this.data.displayName,
 				email: this.data.email,
 				password: this.data.password,
+				role: this.data.role,
+				register_token: this.data.token,
 				grade:
 					{ EF: 10, Q1: 11, Q2: 12 }[this.data.grade as string] ||
-					this.data.grade,
+					parseInt(this.data.grade as string) ||
+					null,
 				cls: this.data.classChar,
 			});
 			const response = await fetch(
@@ -125,7 +140,7 @@ export default Vue.extend({
 </script>
 
 <template>
-	<v-dialog v-model="show" persistent max-width="600px">
+	<v-dialog v-model="show" persistent max-width="800px">
 		<template v-slot:activator="{ on, attrs }">
 			<v-btn
 				v-bind="attrs"
@@ -205,9 +220,18 @@ export default Vue.extend({
 									required
 								/>
 							</v-col>
+							<v-col cols="12">
+								<v-select
+									label="Registrieren als..."
+									v-model="data.role"
+									:items="roles"
+									required
+								></v-select
+							></v-col>
 							<v-col
 								cols="12"
 								:sm="data.grade && data.grade.length == 1 ? 6 : false"
+								v-if="data.role === 0"
 							>
 								<v-select
 									:items="['5', '6', '7', '8', '9', 'EF', 'Q1', 'Q2']"
@@ -216,10 +240,18 @@ export default Vue.extend({
 									required
 								/>
 							</v-col>
+							<v-col cols="12" v-else>
+								<v-text-field
+									label="Registrierungstoken"
+									hint="Um dich als Lehrer anzumelden, brauchst du ein Token. Dieses bekommst du vom lokalen Administrator."
+									persistent-hint
+									v-model="data.token"
+								/>
+							</v-col>
 							<v-col
 								cols="12"
 								sm="6"
-								v-if="data.grade && data.grade.length === 1"
+								v-if="data.grade && data.grade.length === 1 && data.role === 0"
 							>
 								<v-select
 									:items="['A', 'B', 'C', 'D', 'E', 'F']"
