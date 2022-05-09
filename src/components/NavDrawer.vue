@@ -4,16 +4,21 @@ import Vue from "vue";
 export default Vue.extend({
 	name: "NavDrawer",
 	data: () => ({
-		navItems: [
-			{ title: "Dashboard", icon: "mdi-view-dashboard", route: "/" },
-			{ title: "Entdecken", icon: "mdi-compass" },
+		user: {} as { [key: string]: any },
+		preNavItems: [
+			{ title: "Dashboard", icon: "mdi-view-dashboard", route: "/", for: 0 },
+			{ title: "Entdecken", icon: "mdi-compass", for: 1 },
 			{
 				title: "Aktivitäten",
 				icon: "mdi-format-list-bulleted-square",
 				route: "/activities",
+				for: 0,
 			},
 		],
 	}),
+	created() {
+		this.user = JSON.parse(sessionStorage.getItem("user") as string);
+	},
 	methods: {
 		logout() {
 			localStorage.removeItem("token");
@@ -31,6 +36,10 @@ export default Vue.extend({
 			set(value: boolean) {
 				this.$emit("update:visible", value);
 			},
+		},
+
+		navItems(): { title: string; icon: string; route?: string }[] {
+			return this.preNavItems.filter((i) => i.for % 2 ** this.user.role === 0);
 		},
 
 		subtitle(): string {

@@ -24,7 +24,7 @@ export default Vue.extend({
 		},
 		async fetchUser() {
 			let response = await fetch(
-				process.env.VUE_APP_BACKEND_ROOT + "/user/me",
+				process.env.VUE_APP_BACKEND_ROOT + "/user/me/",
 				{
 					headers: { Authorization: "Bearer " + localStorage.token },
 				},

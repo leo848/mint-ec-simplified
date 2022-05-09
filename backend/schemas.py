@@ -34,7 +34,10 @@ class Tag(TagBase):
     class Config:
         orm_mode = True
 
-# User models
+###############
+# User models #
+###############
+
 class UserBase(BaseModel):
     first_name: str
     last_name: str
