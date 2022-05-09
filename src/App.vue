@@ -31,15 +31,18 @@ export default Vue.extend({
 				v-if="$router.history.current.name !== 'login'"
 				@drawerVisibilityToggle="drawerVisible = !drawerVisible"
 			/>
-			<NavDrawer
-				v-if="$router.history.current.name !== 'login'"
-				:visible="drawerVisible"
-				:role="user.role"
-				@update:visible="(v) => (drawerVisible = v)"
-			/>
+			<v-fade-transition hide-on-leave>
+				<NavDrawer
+					v-if="$router.history.current.name !== 'login'"
+					:visible="drawerVisible"
+					:role="user.role"
+					@update:visible="(v) => (drawerVisible = v)"
+			/></v-fade-transition>
 			<v-main>
 				<v-container fluid>
-					<router-view />
+					<v-slide-x-reverse-transition hide-on-leave>
+						<router-view />
+					</v-slide-x-reverse-transition>
 				</v-container>
 			</v-main>
 		</v-app>

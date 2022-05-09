@@ -6,13 +6,24 @@ export default Vue.extend({
 	data: () => ({
 		user: {} as { [key: string]: any },
 		preNavItems: [
-			{ title: "Dashboard", icon: "mdi-view-dashboard", route: "/", for: 0 },
-			{ title: "Entdecken", icon: "mdi-compass", for: 1 },
+			{
+				title: "Dashboard",
+				icon: "mdi-view-dashboard",
+				route: "/",
+				visibleFor: [0, 1],
+			},
+			{ title: "Entdecken", icon: "mdi-compass", visibleFor: [0, 1] },
 			{
 				title: "Aktivitäten",
 				icon: "mdi-format-list-bulleted-square",
 				route: "/activities",
-				for: 0,
+				visibleFor: [0, 1],
+			},
+			{
+				title: "Schüler",
+				icon: "mdi-account-school",
+				route: "/students",
+				visibleFor: [1],
 			},
 		],
 	}),
@@ -39,7 +50,9 @@ export default Vue.extend({
 		},
 
 		navItems(): { title: string; icon: string; route?: string }[] {
-			return this.preNavItems.filter((i) => i.for % 2 ** this.user.role === 0);
+			return this.preNavItems.filter((i) =>
+				i.visibleFor.includes(this.user.role),
+			);
 		},
 
 		subtitle(): string {

@@ -5,6 +5,8 @@ import LoginScreen from "../components/LoginScreen.vue";
 import ActivityView from "../components/ActivityView.vue";
 import AccountView from "../components/AccountView.vue";
 
+import StudentsView from "../components/Teacher/StudentsView.vue";
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
@@ -17,12 +19,6 @@ const routes: Array<RouteConfig> = [
 	{
 		path: "/login",
 		name: "login",
-		// route level code-splitting
-		// this generates a separate chunk (about.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		// (not yet, maybe later)
-		/* component: () => */
-		/* 	import(/1* webpackChunkName: "about" *1/ "../views/AboutView.vue"), */
 		component: LoginScreen,
 		meta: { title: "Einloggen" },
 	},
@@ -37,6 +33,12 @@ const routes: Array<RouteConfig> = [
 		name: "account",
 		component: AccountView,
 		meta: { title: "Account" },
+	},
+	{
+		path: "/students",
+		name: "students",
+		component: StudentsView,
+		meta: { title: "Alle Schüler" },
 	},
 ];
 
