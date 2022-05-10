@@ -57,7 +57,8 @@ export default Vue.extend({
 		<v-row>
 			<v-col
 				cols="12"
-				md="6"
+				sm="6"
+				md="4"
 				v-for="grade in requiredGrades"
 				:key="grade.number"
 				class="class-card md-4"
@@ -72,6 +73,7 @@ export default Vue.extend({
 									(s) => s.grade === grade.number,
 								)"
 								:key="student.id"
+								@click="() => {}"
 							>
 								<v-list-item-avatar
 									><v-avatar color="primary" class="white--text text-h6">{{

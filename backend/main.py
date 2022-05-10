@@ -148,11 +148,13 @@ def read_activities(
 
 
 @app.get("/teacher/students/", response_model=list[schemas.User])
-def read_students(user=Security(manager, scopes=["teacher"]), db: Session = Depends(get_db)):
+def read_students(
+    user=Security(manager, scopes=["teacher"]), db: Session = Depends(get_db)
+):
     return (
         db.query(models.User)
         .filter(models.User.role == 0)
-        .order_by(models.User.cls, models.User.grade)
+        .order_by(models.User.cls, models.User.grade, models.User.last_name)
         .all()
     )
 
