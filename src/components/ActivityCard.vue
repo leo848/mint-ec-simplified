@@ -59,9 +59,9 @@ export default Vue.extend({
 				</span>
 			</v-tooltip>
 			<v-spacer />
-			<v-btn icon>
-				<v-icon>mdi-pencil</v-icon>
-			</v-btn>
+			<!-- <v-btn icon> -->
+			<!-- 	<v-icon>mdi-pencil</v-icon> -->
+			<!-- </v-btn> -->
 		</v-card-actions>
 	</v-card>
 </template>
