@@ -13,7 +13,7 @@ export default Vue.extend({
 </script>
 
 <template>
-	<v-app-bar app>
+	<v-app-bar app elevate-on-scroll>
 		<v-app-bar-nav-icon
 			@click="$emit('drawerVisibilityToggle')"
 		></v-app-bar-nav-icon>
