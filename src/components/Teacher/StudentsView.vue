@@ -5,6 +5,7 @@ export default Vue.extend({
 	data: () => ({
 		user: {} as { [key: string]: any },
 		loading: false,
+		search: "",
 		students: [],
 		grades: [
 			{ number: 5, string: "5" },
@@ -34,6 +35,11 @@ export default Vue.extend({
 			this.students = await response.json();
 			this.loading = false;
 		},
+		studentSearched(student: { [key: string]: any }): boolean {
+			return `${student.first_name} ${student.last_name} ${student.grade}${student.cls}`
+				.toLowerCase()
+				.includes(this.search.toLowerCase());
+		},
 		initials(student: { [key: string]: any }): string {
 			return student.first_name.charAt(0) + student.last_name.charAt(0);
 		},
@@ -41,9 +47,10 @@ export default Vue.extend({
 	computed: {
 		requiredGrades() {
 			return this.grades.filter(
-				(g: { number: number; string: string }) =>
+				(grade: { number: number; string: string }): boolean =>
 					this.students.some(
-						(s: { [key: string]: any }) => s.grade === g.number,
+						(student: { [key: string]: any }): boolean =>
+							student.grade === grade.number && this.studentSearched(student),
 					),
 				0,
 			);
@@ -54,6 +61,16 @@ export default Vue.extend({
 
 <template>
 	<div class="wrapper">
+		<v-toolbar rounded elevation="4" class="mb-4">
+			<v-text-field
+				v-model="search"
+				hide-details
+				prepend-icon="mdi-magnify"
+				single-line
+				clearable
+				placeholder="Filtern..."
+			/>
+		</v-toolbar>
 		<v-row>
 			<v-col
 				cols="12"
@@ -69,9 +86,9 @@ export default Vue.extend({
 						<v-list>
 							<v-list-item
 								two-line
-								v-for="student in students.filter(
-									(s) => s.grade === grade.number,
-								)"
+								v-for="student in students
+									.filter((s) => s.grade === grade.number)
+									.filter((s) => studentSearched(s))"
 								:key="student.id"
 								@click="() => {}"
 							>
