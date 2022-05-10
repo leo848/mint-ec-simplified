@@ -34,6 +34,9 @@ export default Vue.extend({
 			this.students = await response.json();
 			this.loading = false;
 		},
+		initials(student: { [key: string]: any }): string {
+			return student.first_name.charAt(0) + student.last_name.charAt(0);
+		},
 	},
 	computed: {
 		requiredGrades() {
@@ -62,24 +65,30 @@ export default Vue.extend({
 				<v-card>
 					<v-card-title class="text-h3">{{ grade.string }}</v-card-title>
 					<v-card-text>
-						<v-row
-							><v-col
-								cols="6"
+						<v-list>
+							<v-list-item
+								two-line
 								v-for="student in students.filter(
 									(s) => s.grade === grade.number,
 								)"
 								:key="student.id"
-								><v-card
-									><v-card-text
-										><v-avatar color="primary" class="white--text text-h5">{{
-											student.first_name.charAt(0) + student.last_name.charAt(0)
-										}}</v-avatar></v-card-text
-									><v-card-title
+							>
+								<v-list-item-avatar
+									><v-avatar color="primary" class="white--text text-h6">{{
+										initials(student)
+									}}</v-avatar></v-list-item-avatar
+								><v-list-item-content
+									><v-list-item-title
 										>{{ student.first_name }}
-										{{ student.last_name }}</v-card-title
-									></v-card
-								></v-col
-							></v-row
+										{{ student.last_name }}</v-list-item-title
+									>
+									<v-list-item-subtitle>
+										<span v-if="student.cls">{{
+											student.grade + student.cls
+										}}</span>
+									</v-list-item-subtitle>
+								</v-list-item-content>
+							</v-list-item></v-list
 						>
 					</v-card-text>
 				</v-card>
