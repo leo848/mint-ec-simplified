@@ -31,7 +31,6 @@ export default Vue.extend({
 			);
 			this.user = await response.json();
 			this.data = { ...this.data, ...this.user };
-			console.log(this.data);
 		},
 	},
 	computed: {

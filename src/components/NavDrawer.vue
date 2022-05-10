@@ -28,11 +28,19 @@ export default Vue.extend({
 		],
 	}),
 	created() {
-		this.user = JSON.parse(sessionStorage.getItem("user") as string);
+		this.getUser();
 	},
 	methods: {
+		getUser() {
+			this.user = JSON.parse(sessionStorage.getItem("user") as string);
+		},
 		logout() {
 			localStorage.removeItem("token");
+		},
+	},
+	watch: {
+		$route(to, from) {
+			this.getUser();
 		},
 	},
 	props: {

@@ -20,6 +20,7 @@ export default Vue.extend({
 		);
 		if (!response.ok) this.$router.push("/login");
 		this.user = await response.json();
+		sessionStorage.setItem("user", JSON.stringify(this.user));
 	},
 	components: { NavDrawer, NavBar },
 });

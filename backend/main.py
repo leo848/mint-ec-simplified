@@ -51,7 +51,7 @@ def get_db():
 # User query
 @manager.user_loader()
 def query_user(user_email: str, db: Session = Depends(get_db)):
-    db = next(get_db())
+    db = SessionLocal()
     return crud.get_user_by_email(db, user_email)
 
 

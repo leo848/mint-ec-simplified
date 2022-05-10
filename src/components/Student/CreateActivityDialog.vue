@@ -63,7 +63,6 @@ export default Vue.extend({
 				category_id: this.data.category["id"],
 				tags: this.data.tags,
 			};
-			console.log(JSON.stringify(data));
 			const response = await fetch(
 				process.env.VUE_APP_BACKEND_ROOT + "/student/activities/",
 				{
