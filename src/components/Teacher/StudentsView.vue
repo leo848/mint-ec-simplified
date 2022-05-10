@@ -71,14 +71,9 @@ export default Vue.extend({
 								:key="student.id"
 								><v-card
 									><v-card-text
-										><v-avatar
-											color="primary"
-											class="font-weight-bold text-h5"
-											>{{
-												student.first_name.charAt(0) +
-												student.last_name.charAt(0)
-											}}</v-avatar
-										></v-card-text
+										><v-avatar color="primary" class="white--text text-h5">{{
+											student.first_name.charAt(0) + student.last_name.charAt(0)
+										}}</v-avatar></v-card-text
 									><v-card-title
 										>{{ student.first_name }}
 										{{ student.last_name }}</v-card-title
