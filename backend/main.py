@@ -161,7 +161,11 @@ def read_students(
 
 # Review an activity and either accept or reject it.
 @app.post("/teacher/review/", response_model=schemas.Activity)
-def review_activity(review: schemas.ActivityReview, db: Session = Depends(get_db)):
+def review_activity(
+    review: schemas.ActivityReview,
+    user=Security(manager, scopes=["teacher"]),
+    db: Session = Depends(get_db),
+):
     query = db.query(models.Activity).filter(models.Activity.id == review.activity_id)
     activity = query.first()
     if not activity:

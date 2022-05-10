@@ -6,6 +6,7 @@ import ActivityView from "../components/ActivityView.vue";
 import AccountView from "../components/AccountView.vue";
 
 import StudentsView from "../components/Teacher/StudentsView.vue";
+import UserView from "../components/Teacher/UserView.vue";
 
 Vue.use(VueRouter);
 
@@ -39,6 +40,12 @@ const routes: Array<RouteConfig> = [
 		name: "students",
 		component: StudentsView,
 		meta: { title: "Alle Schüler" },
+	},
+	{
+		path: "/user/:id",
+		name: "user",
+		component: UserView,
+		meta: { title: "Account-Seite" },
 	},
 ];
 

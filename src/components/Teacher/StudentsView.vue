@@ -90,7 +90,7 @@ export default Vue.extend({
 									.filter((s) => s.grade === grade.number)
 									.filter((s) => studentSearched(s))"
 								:key="student.id"
-								@click="() => {}"
+								:href="'/user/' + student.id"
 							>
 								<v-list-item-avatar
 									><v-avatar color="primary" class="white--text text-h6">{{
