@@ -52,26 +52,6 @@ export default Vue.extend({
 			<v-card-subtitle class="text-h5 mb-4">{{ user.email }}</v-card-subtitle>
 		</v-card>
 		<v-row>
-			<!-- <v-col cols="12"> -->
-			<!-- 	<v-card v-if="!loading" -->
-			<!-- 		><v-card-title class="text-h4 justify-center">Übersicht</v-card-title -->
-			<!-- 		><v-card-text> -->
-			<!-- 			<v-row> -->
-			<!-- 				<v-col v-for="(card, i) in overviewItems" :key="i"> -->
-			<!-- 					<v-card :color="card.color" :loading="loading"> -->
-			<!-- 						<v-card-title class="text-h2 justify-center">{{ -->
-			<!-- 							activityOverview[card.value] -->
-			<!-- 						}}</v-card-title> -->
-			<!-- 						<v-card-subtitle class="text-h6 text-center">{{ -->
-			<!-- 							card.title -->
-			<!-- 						}}</v-card-subtitle> -->
-			<!-- 					</v-card> -->
-			<!-- 				</v-col> -->
-			<!-- 			</v-row> -->
-			<!-- 		</v-card-text></v-card -->
-			<!-- 	> -->
-			<!-- 	<v-skeleton-loader v-else type="image" /> -->
-			<!-- </v-col> -->
 			<v-col
 				cols="12"
 				sm="6"
@@ -80,6 +60,11 @@ export default Vue.extend({
 				:key="activity.id"
 			>
 				<ActivityCard :activity="activity" />
+			</v-col>
+			<v-col cols="12" sm="6" v-if="activities.length === 0">
+				<v-card>
+					<v-card-title class="text-h4">Keine Aktivitäten</v-card-title>
+				</v-card>
 			</v-col>
 		</v-row>
 	</div>
