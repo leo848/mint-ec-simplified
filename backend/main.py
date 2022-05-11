@@ -134,17 +134,35 @@ def read_activities(
 ):
     return crud.get_activities(db)
 
+
 @app.get("/teacher/students/{student_id}/", response_model=schemas.User)
-def read_user(student_id: int, user=Security(manager, scopes=["teacher"]), db: Session = Depends(get_db)):
+def read_user(
+    student_id: int,
+    user=Security(manager, scopes=["teacher"]),
+    db: Session = Depends(get_db),
+):
     return crud.get_user(db, user_id=student_id)
 
-@app.get("/teacher/students/{student_id}/activities/", response_model=list[schemas.Activity])
-def read_student_activities(student_id: int, user=Security(manager, scopes=["teacher"]), db: Session=Depends(get_db)):
+
+@app.get(
+    "/teacher/students/{student_id}/activities/", response_model=list[schemas.Activity]
+)
+def read_student_activities(
+    student_id: int,
+    user=Security(manager, scopes=["teacher"]),
+    db: Session = Depends(get_db),
+):
     return crud.get_user(db, user_id=student_id).created_activities
 
+
 @app.post("/teacher/students/{student_id}/activities/", response_model=schemas.Activity)
-def create_student_activity(activity: schemas.ActivityCreate, student_id: int, user=Security(manager, scopes=["teacher"]), db: Session = Depends(get_db)):
-    return dbmethods.create_activity(activity, student_id, db)
+def create_student_activity(
+    activity: schemas.ActivityCreate,
+    student_id: int,
+    user=Security(manager, scopes=["teacher"]),
+    db: Session = Depends(get_db),
+):
+    return dbmethods.create_activity(activity, student_id, db, teacher=True, teacher_id=user.id)
 
 
 @app.get("/teacher/students/", response_model=list[schemas.User])
@@ -187,8 +205,6 @@ def review_activity(
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)
     return users
-
-
 
 
 @app.delete("/users/{user_id}/", status_code=204)

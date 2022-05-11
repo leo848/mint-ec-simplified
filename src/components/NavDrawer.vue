@@ -59,7 +59,7 @@ export default Vue.extend({
 
 		navItems(): { title: string; icon: string; route?: string }[] {
 			return this.preNavItems.filter((i) =>
-				i.visibleFor.includes(this.user.role),
+				i.visibleFor.includes((this.user || {}).role),
 			);
 		},
 

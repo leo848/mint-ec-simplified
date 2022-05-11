@@ -15,6 +15,7 @@ export default Vue.extend({
 	},
 	methods: {
 		async fetchUser(id: number) {
+			console.log(process.env.VUE_APP_BACKEND_ROOT);
 			const response = await fetch(
 				process.env.VUE_APP_BACKEND_ROOT + "/teacher/students/" + id + "/",
 				{
@@ -68,6 +69,10 @@ export default Vue.extend({
 				</v-card>
 			</v-col>
 		</v-row>
-		<CreateActivityDialog user="user" teacher />
+		<CreateActivityDialog
+			:user="user"
+			@done="fetchActivities(parseInt($route.params.id))"
+			teacher
+		/>
 	</div>
 </template>
