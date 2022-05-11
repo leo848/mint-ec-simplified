@@ -45,6 +45,10 @@ export default Vue.extend({
 			],
 		},
 	}),
+	props: {
+		user: Object,
+		teacher: Boolean,
+	},
 	async created() {
 		await this.fetchRequiredData();
 	},
@@ -64,7 +68,9 @@ export default Vue.extend({
 				tags: this.data.tags,
 			};
 			const response = await fetch(
-				process.env.VUE_APP_BACKEND_ROOT + "/student/activities/",
+				process.env.VUE_APP_BACKEND_ROOT + this.teacher
+					? `/teacher/students/${this.user.id}/activities`
+					: "/student/activities/",
 				{
 					method: "POST",
 					headers: {

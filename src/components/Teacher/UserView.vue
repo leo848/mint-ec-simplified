@@ -1,10 +1,11 @@
 <script lang="ts">
 import Vue from "vue";
 import ActivityCard from "../ActivityCard.vue";
+import CreateActivityDialog from "../CreateActivityDialog.vue";
 
 export default Vue.extend({
 	name: "UserView",
-	components: { ActivityCard },
+	components: { ActivityCard, CreateActivityDialog },
 	data: () => ({
 		user: {} as { [key: string]: any },
 		activities: [],
@@ -67,5 +68,6 @@ export default Vue.extend({
 				</v-card>
 			</v-col>
 		</v-row>
+		<CreateActivityDialog user="user" teacher />
 	</div>
 </template>

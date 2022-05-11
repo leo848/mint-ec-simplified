@@ -1,6 +1,6 @@
 <script lang="ts">
 import Vue from "vue";
-import CreateActivityDialog from "./CreateActivityDialog.vue";
+import CreateActivityDialog from "../CreateActivityDialog.vue";
 import ActivityCard from "../ActivityCard.vue";
 
 export default Vue.extend({
