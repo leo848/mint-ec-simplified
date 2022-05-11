@@ -3,12 +3,17 @@ import Vue from "vue";
 
 export default Vue.extend({
 	name: "ActivityCard",
-	props: ["activity"],
+	props: { activity: Object, teacher: Boolean },
+	computed: {
+		link(): string | null {
+			return this.teacher ? `/activities/${this.activity.id}` : null;
+		},
+	},
 });
 </script>
 
 <template>
-	<v-card class="mx-auto" dense>
+	<v-card class="mx-auto" :href="link" dense>
 		<v-card-title> {{ activity.title }} </v-card-title>
 		<v-card-subtitle> {{ activity.category.title }} </v-card-subtitle>
 		<v-card-text>

@@ -59,7 +59,7 @@ export default Vue.extend({
 				v-for="activity in activities"
 				:key="activity.id"
 			>
-				<ActivityCard :activity="activity" />
+				<ActivityCard :activity="activity" teacher />
 			</v-col>
 			<v-col cols="12" sm="6" v-if="activities.length === 0">
 				<v-card>
