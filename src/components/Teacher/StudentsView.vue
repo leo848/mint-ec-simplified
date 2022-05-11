@@ -40,6 +40,15 @@ export default Vue.extend({
 				.toLowerCase()
 				.includes(this.search.toLowerCase());
 		},
+		highlight(student: { [key: string]: any }): string {
+			let initialString = `${student.first_name} ${student.last_name}`;
+			if (!this.search.length) return initialString;
+			return initialString.replace(
+				new RegExp(`${this.search}`, "gi"),
+				(match) =>
+					`<span class="font-weight-bold deep-orange darken-4">${match}</span>`,
+			);
+		},
 		initials(student: { [key: string]: any }): string {
 			return student.first_name.charAt(0) + student.last_name.charAt(0);
 		},
@@ -97,10 +106,8 @@ export default Vue.extend({
 										initials(student)
 									}}</v-avatar></v-list-item-avatar
 								><v-list-item-content
-									><v-list-item-title
-										>{{ student.first_name }}
-										{{ student.last_name }}</v-list-item-title
-									>
+									><v-list-item-title v-html="highlight(student)">
+									</v-list-item-title>
 									<v-list-item-subtitle>
 										<span v-if="student.cls">{{
 											student.grade + student.cls
