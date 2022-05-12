@@ -4,7 +4,7 @@ import CreateActivityDialog from "../CreateActivityDialog.vue";
 import ActivityCard from "../ActivityCard.vue";
 
 export default Vue.extend({
-	name: "ActivityView",
+	name: "ActivitiesView",
 	data: () => ({
 		user: {},
 		activities: [] as { [key: string]: any }[],

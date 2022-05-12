@@ -15,7 +15,6 @@ export default Vue.extend({
 	},
 	methods: {
 		async fetchUser(id: number) {
-			console.log(process.env.VUE_APP_BACKEND_ROOT);
 			const response = await fetch(
 				process.env.VUE_APP_BACKEND_ROOT + "/teacher/students/" + id + "/",
 				{
