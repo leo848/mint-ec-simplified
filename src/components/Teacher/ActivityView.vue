@@ -1,10 +1,11 @@
 <script lang="ts">
 import Vue from "vue";
 import UserCard from "./UserCard.vue";
+import ActivityReviewItem from "../ActivityReviewItem.vue";
 
 export default Vue.extend({
 	name: "ActivityView",
-	components: { UserCard },
+	components: { UserCard, ActivityReviewItem },
 	data: () => ({
 		activity: {} as { [key: string]: any },
 	}),
@@ -29,7 +30,7 @@ export default Vue.extend({
 	<div class="wrapper">
 		<v-card>
 			<v-card-title class="text-h3 mt-4">{{ activity.title }} </v-card-title>
-			<v-card-subtitle class="text-h5 pl-4">
+			<v-card-subtitle class="text-h5 pl-4" v-if="activity.category">
 				{{ activity.category.title }}
 			</v-card-subtitle>
 			<v-card-subtitle
@@ -44,6 +45,9 @@ export default Vue.extend({
 			<v-card-text>
 				<UserCard :user="activity.created_by" />
 			</v-card-text>
+			<v-card-actions>
+				<ActivityReviewItem :activity="activity" card />
+			</v-card-actions>
 		</v-card>
 	</div>
 </template>

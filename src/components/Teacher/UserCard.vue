@@ -28,16 +28,20 @@ export default Vue.extend({
 </script>
 
 <template>
-	<v-list-item two-line :href="'/user/' + user.id">
-		<v-list-item-avatar
-			><v-avatar color="primary" class="white--text text-h6">{{
-				initials(user)
-			}}</v-avatar></v-list-item-avatar
-		><v-list-item-content
-			><v-list-item-title v-html="highlight(user)"> </v-list-item-title>
-			<v-list-item-subtitle>
-				<span v-if="user.cls">{{ user.grade + user.cls }}</span>
-			</v-list-item-subtitle>
-		</v-list-item-content>
-	</v-list-item>
+	<v-card v-if="user" hover :to="'/user/' + user.id">
+		<v-card-text class="pa-0 ma-0">
+			<v-list-item two-line>
+				<v-list-item-avatar
+					><v-avatar color="primary" class="white--text text-h6">{{
+						initials(user)
+					}}</v-avatar></v-list-item-avatar
+				><v-list-item-content
+					><v-list-item-title v-html="highlight(user)"> </v-list-item-title>
+					<v-list-item-subtitle>
+						<span v-if="user.cls">{{ user.grade + user.cls }}</span>
+					</v-list-item-subtitle>
+				</v-list-item-content>
+			</v-list-item></v-card-text
+		></v-card
+	>
 </template>
