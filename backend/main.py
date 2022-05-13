@@ -134,6 +134,14 @@ def read_activities(
 ):
     return crud.get_activities(db)
 
+@app.get("/teacher/activities/{activity_id}", response_model=schemas.Activity)
+def read_activity(
+    activity_id: int,
+    user=Security(manager, scopes=["teacher"]),
+    db: Session = Depends(get_db),
+):
+
+    return crud.get_activity(db, activity_id)
 
 @app.get("/teacher/students/{student_id}/", response_model=schemas.User)
 def read_user(
