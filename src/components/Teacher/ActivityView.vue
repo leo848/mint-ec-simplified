@@ -1,8 +1,10 @@
 <script lang="ts">
 import Vue from "vue";
+import UserCard from "./UserCard.vue";
 
 export default Vue.extend({
 	name: "ActivityView",
+	components: { UserCard },
 	data: () => ({
 		activity: {} as { [key: string]: any },
 	}),
@@ -27,13 +29,21 @@ export default Vue.extend({
 	<div class="wrapper">
 		<v-card>
 			<v-card-title class="text-h3 mt-4">{{ activity.title }} </v-card-title>
-			<v-card-subtitle class="pl-4 grey--text">
+			<v-card-subtitle class="text-h5 pl-4">
 				{{ activity.category.title }}
 			</v-card-subtitle>
 			<v-card-subtitle
-				class="text-h5 mb-4"
-				v-html="activity.description.replace('\n', '<br/>')"
+				class="text-h6 mb-4 font-weight-regular text--disabled"
+				v-html="
+					(activity.description || 'Keine erweiterte Beschreibung').replace(
+						'\n',
+						'<br/>',
+					)
+				"
 			></v-card-subtitle>
+			<v-card-text>
+				<UserCard :user="activity.created_by" />
+			</v-card-text>
 		</v-card>
 	</div>
 </template>
