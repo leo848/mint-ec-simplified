@@ -1,8 +1,10 @@
 <script lang="ts">
 import Vue from "vue";
+import UserCard from "./UserCard.vue";
 
 export default Vue.extend({
 	name: "StudentsView",
+	components: { UserCard },
 	data: () => ({
 		user: {} as { [key: string]: any },
 		loading: false,
@@ -40,18 +42,6 @@ export default Vue.extend({
 			return `${student.first_name} ${student.last_name} ${student.grade}${student.cls}`
 				.toLowerCase()
 				.includes(this.search.toLowerCase());
-		},
-		highlight(student: { [key: string]: any }): string {
-			let initialString = `${student.first_name} ${student.last_name}`;
-			if (!this.search.length) return initialString;
-			return initialString.replace(
-				new RegExp(`${this.search}`, "gi"),
-				(match) =>
-					`<span class="font-weight-bold deep-orange darken-4">${match}</span>`,
-			);
-		},
-		initials(student: { [key: string]: any }): string {
-			return student.first_name.charAt(0) + student.last_name.charAt(0);
 		},
 	},
 	computed: {
@@ -94,32 +84,17 @@ export default Vue.extend({
 					<v-card-title class="text-h3">{{ grade.string }}</v-card-title>
 					<v-card-text>
 						<v-list>
-							<v-list-item
-								two-line
+							<UserCard
 								v-for="student in students
 									.filter((s) => s.grade === grade.number)
 									.filter((s) => studentSearched(s))"
 								:key="student.id"
-								:href="'/user/' + student.id"
-							>
-								<v-list-item-avatar
-									><v-avatar color="primary" class="white--text text-h6">{{
-										initials(student)
-									}}</v-avatar></v-list-item-avatar
-								><v-list-item-content
-									><v-list-item-title v-html="highlight(student)">
-									</v-list-item-title>
-									<v-list-item-subtitle>
-										<span v-if="student.cls">{{
-											student.grade + student.cls
-										}}</span>
-									</v-list-item-subtitle>
-								</v-list-item-content>
-							</v-list-item></v-list
-						>
+								:user="student"
+								:search="search"
+							/>
+						</v-list>
 					</v-card-text>
-				</v-card>
-			</v-col></v-row
-		>
+				</v-card> </v-col
+		></v-row>
 	</div>
 </template>
