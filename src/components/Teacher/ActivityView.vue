@@ -28,6 +28,11 @@ export default Vue.extend({
 			this.activity = await response.json();
 		},
 	},
+	watch: {
+		$route() {
+			this.fetchActivity();
+		},
+	},
 });
 </script>
 
@@ -57,6 +62,7 @@ export default Vue.extend({
 					v-if="activity.id"
 					:activity="activity"
 					min-width="300px"
+					:key="activity.review_status"
 					card
 					teacher
 					@edit="fetchActivity"

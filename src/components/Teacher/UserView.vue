@@ -8,33 +8,40 @@ export default Vue.extend({
 	components: { ActivityCard, CreateActivityDialog },
 	data: () => ({
 		user: {} as { [key: string]: any },
+		id: 0,
 		activities: [],
 	}),
 	async created() {
-		await this.fetchUser(parseInt(this.$route.params.id));
+		this.id = parseInt(this.$route.params.id);
+		await this.fetchUser();
 	},
 	methods: {
-		async fetchUser(id: number) {
+		async fetchUser() {
 			const response = await fetch(
-				process.env.VUE_APP_BACKEND_ROOT + "/teacher/students/" + id + "/",
+				process.env.VUE_APP_BACKEND_ROOT + "/teacher/students/" + this.id + "/",
 				{
 					headers: { Authorization: "Bearer " + localStorage.token },
 				},
 			);
 			this.user = await response.json();
-			await this.fetchActivities(id);
+			await this.fetchActivities();
 		},
-		async fetchActivities(id: number) {
+		async fetchActivities() {
 			const response = await fetch(
 				process.env.VUE_APP_BACKEND_ROOT +
 					"/teacher/students/" +
-					id +
+					this.id +
 					"/activities/",
 				{
 					headers: { Authorization: "Bearer " + localStorage.token },
 				},
 			);
 			this.activities = await response.json();
+		},
+	},
+	watch: {
+		$route() {
+			this.fetchUser();
 		},
 	},
 });
@@ -68,10 +75,6 @@ export default Vue.extend({
 				</v-card>
 			</v-col>
 		</v-row>
-		<CreateActivityDialog
-			:user="user"
-			@done="fetchActivities(parseInt($route.params.id))"
-			teacher
-		/>
+		<CreateActivityDialog :user="user" @done="fetchActivities" teacher />
 	</div>
 </template>

@@ -33,6 +33,7 @@ export default Vue.extend({
 	data: function () {
 		return {
 			status: this.setStatus as number,
+			loading: false,
 		};
 	},
 	created() {
@@ -55,15 +56,13 @@ export default Vue.extend({
 		},
 	},
 	methods: {
-		setReviewStatus() {
-			this.$emit("edit");
-		},
-		async resetReviewStatus() {
-			const response = await fetch(
+		async setReviewStatus(status: number) {
+			this.loading = true;
+			await fetch(
 				process.env.VUE_APP_BACKEND_ROOT +
 					"/teacher/activities/" +
 					this.activity.id +
-					"/review",
+					"/review/",
 				{
 					method: "POST",
 					headers: {
@@ -71,18 +70,28 @@ export default Vue.extend({
 						"Authorization": "Bearer " + localStorage.token,
 					},
 					body: JSON.stringify({
-						status: 0,
+						status: status,
 					}),
 				},
 			);
+			this.loading = false;
 			this.$emit("edit");
+		},
+		async resetReviewStatus() {
+			await this.setReviewStatus(0);
 		},
 	},
 });
 </script>
 
 <template>
-	<v-card v-if="card" :min-width="minWidth" :color="reviewColor">
+	<v-card
+		v-if="card"
+		:loading="loading"
+		loading-height="20"
+		:min-width="minWidth"
+		:color="reviewColor"
+	>
 		<v-card-title>
 			<ActivityReviewItem
 				:activity="activity"
@@ -112,13 +121,13 @@ export default Vue.extend({
 					>
 				</template>
 				<v-list>
-					<v-list-item>
+					<v-list-item @click="setReviewStatus(1)">
 						<v-list-item-title>Annehmen</v-list-item-title>
 						<v-list-item-icon
 							><ActivityReviewItem :set-status="1" no-tooltip
 						/></v-list-item-icon>
 					</v-list-item>
-					<v-list-item>
+					<v-list-item @click="setReviewStatus(-1)">
 						<v-list-item-title>Ablehnen</v-list-item-title>
 						<v-list-item-icon
 							><ActivityReviewItem :set-status="-1" no-tooltip
