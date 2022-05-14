@@ -36,8 +36,7 @@ export default Vue.extend({
 	computed: {
 		reviewColor(): string | null {
 			return (
-				{ "-1": "error", "0": null, "1": "success" }[String(this.status)] ||
-				null
+				{ "-1": "red", "0": null, "1": "success" }[String(this.status)] || null
 			);
 		},
 		statusName(): string {
@@ -105,9 +104,15 @@ export default Vue.extend({
 				<v-list>
 					<v-list-item>
 						<v-list-item-title>Annehmen</v-list-item-title>
+						<v-list-item-icon
+							><ActivityReviewItem :set-status="1"
+						/></v-list-item-icon>
 					</v-list-item>
 					<v-list-item>
 						<v-list-item-title>Ablehnen</v-list-item-title>
+						<v-list-item-icon
+							><ActivityReviewItem :set-status="-1"
+						/></v-list-item-icon>
 					</v-list-item>
 				</v-list>
 			</v-menu>
@@ -120,7 +125,9 @@ export default Vue.extend({
 	<v-tooltip bottom v-else>
 		<template v-slot:activator="{ on, attrs }">
 			<v-btn icon v-if="status === 0" v-bind="attrs" v-on="on">
-				<v-icon large>mdi-clock-time-eight</v-icon>
+				<v-icon large :color="!noIconColor ? reviewColor : null"
+					>mdi-clock-time-eight</v-icon
+				>
 			</v-btn>
 			<v-btn icon v-else-if="status === 1" v-bind="attrs" v-on="on">
 				<v-icon large :color="!noIconColor ? reviewColor : null"
@@ -128,7 +135,7 @@ export default Vue.extend({
 				>
 			</v-btn>
 			<v-btn icon v-else-if="status === -1" v-bind="attrs" v-on="on">
-				<v-icon large color="!noIconColor ? reviewColor : null"
+				<v-icon large :color="!noIconColor ? reviewColor : null"
 					>mdi-close-circle</v-icon
 				>
 			</v-btn>
