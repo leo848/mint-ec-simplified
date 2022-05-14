@@ -16,6 +16,10 @@ export default Vue.extend({
 			type: Boolean,
 			default: false,
 		},
+		noTooltip: {
+			type: Boolean,
+			default: false,
+		},
 		card: {
 			type: Boolean,
 			default: false,
@@ -24,6 +28,7 @@ export default Vue.extend({
 			type: Boolean,
 			default: false,
 		},
+		minWidth: String,
 	},
 	data: function () {
 		return {
@@ -77,15 +82,16 @@ export default Vue.extend({
 </script>
 
 <template>
-	<v-card v-if="card" :color="reviewColor">
+	<v-card v-if="card" :min-width="minWidth" :color="reviewColor">
 		<v-card-title>
 			<ActivityReviewItem
 				:activity="activity"
 				:key="activity.id"
 				no-icon-color
-			/>
-			<span class="ml-2">{{ statusName }}</span></v-card-title
-		>
+				no-tooltip />
+			<span class="ml-4">{{ statusName }}</span>
+			<v-spacer
+		/></v-card-title>
 		<v-card-subtitle class="mt-1" v-if="activity.reviewed_by"
 			>Bearbeitet von: <UserCard :user="activity.reviewed_by"
 		/></v-card-subtitle>
@@ -97,32 +103,36 @@ export default Vue.extend({
 						v-bind="attrs"
 						:color="reviewColor + ' darken-2'"
 						x-large
+						v-if="!status"
 					>
 						Bearbeiten
 					</v-btn>
+					<v-btn fab v-on="on" v-bind="attrs" v-else
+						><v-icon>mdi-pencil</v-icon></v-btn
+					>
 				</template>
 				<v-list>
 					<v-list-item>
 						<v-list-item-title>Annehmen</v-list-item-title>
 						<v-list-item-icon
-							><ActivityReviewItem :set-status="1"
+							><ActivityReviewItem :set-status="1" no-tooltip
 						/></v-list-item-icon>
 					</v-list-item>
 					<v-list-item>
 						<v-list-item-title>Ablehnen</v-list-item-title>
 						<v-list-item-icon
-							><ActivityReviewItem :set-status="-1"
+							><ActivityReviewItem :set-status="-1" no-tooltip
 						/></v-list-item-icon>
 					</v-list-item>
 				</v-list>
 			</v-menu>
 			<v-spacer />
-			<v-btn icon v-if="status" @click="resetReviewStatus"
+			<v-btn fab v-if="status" @click="resetReviewStatus"
 				><v-icon>mdi-delete</v-icon></v-btn
 			>
 		</v-card-actions>
 	</v-card>
-	<v-tooltip bottom v-else>
+	<v-tooltip bottom :disabled="noTooltip" v-else>
 		<template v-slot:activator="{ on, attrs }">
 			<v-btn icon v-if="status === 0" v-bind="attrs" v-on="on">
 				<v-icon large :color="!noIconColor ? reviewColor : null"

@@ -34,7 +34,9 @@ export default Vue.extend({
 <template>
 	<div class="wrapper">
 		<v-card>
-			<v-card-title class="text-h3 mt-4">{{ activity.title }} </v-card-title>
+			<v-card-title class="text-h3 text-center mt-4"
+				>{{ activity.title }}
+			</v-card-title>
 			<v-card-subtitle class="text-h5 pl-4" v-if="activity.category">
 				{{ activity.category.title }}
 			</v-card-subtitle>
@@ -54,6 +56,7 @@ export default Vue.extend({
 				<ActivityReviewItem
 					v-if="activity.id"
 					:activity="activity"
+					min-width="300px"
 					card
 					teacher
 					@edit="fetchActivity"
