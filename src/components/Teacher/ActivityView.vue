@@ -8,14 +8,19 @@ export default Vue.extend({
 	components: { UserCard, ActivityReviewItem },
 	data: () => ({
 		activity: {} as { [key: string]: any },
+		id: 0,
 	}),
 	async created() {
-		await this.fetchActivity(parseInt(this.$route.params.id));
+		this.id = parseInt(this.$route.params.id);
+		await this.fetchActivity();
 	},
 	methods: {
-		async fetchActivity(id: number) {
+		async fetchActivity() {
 			const response = await fetch(
-				process.env.VUE_APP_BACKEND_ROOT + "/teacher/activities/" + id + "/",
+				process.env.VUE_APP_BACKEND_ROOT +
+					"/teacher/activities/" +
+					this.id +
+					"/",
 				{
 					headers: { Authorization: "Bearer " + localStorage.token },
 				},
@@ -46,7 +51,13 @@ export default Vue.extend({
 				<UserCard :user="activity.created_by" />
 			</v-card-text>
 			<v-card-actions>
-				<ActivityReviewItem :activity="activity" card />
+				<ActivityReviewItem
+					v-if="activity.id"
+					:activity="activity"
+					card
+					teacher
+					@edit="fetchActivity"
+				/>
 			</v-card-actions>
 		</v-card>
 	</div>

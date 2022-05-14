@@ -143,6 +143,30 @@ def read_activity(
 
     return crud.get_activity(db, activity_id)
 
+# Review an activity and either accept or reject it.
+@app.post("/teacher/activities/{activity_id}/review/", response_model=schemas.Activity)
+def review_activity(
+    activity_id: int,
+    review: schemas.ActivityReview,
+    user=Security(manager, scopes=["teacher"]),
+    db: Session = Depends(get_db),
+):
+    query = db.query(models.Activity).filter(models.Activity.id == activity_id)
+    activity = query.first()
+    if not activity:
+        raise HTTPException(status_code=400, detail="Activity not found.")
+
+    query.update(
+        {
+            "reviewed_by_id": user.id if review.status else None,
+            "review_status": review.status,
+        }
+    )
+    db.commit()
+    db.refresh(activity)
+    return activity
+
+
 @app.get("/teacher/students/{student_id}/", response_model=schemas.User)
 def read_user(
     student_id: int,
@@ -183,29 +207,6 @@ def read_students(
         .order_by(models.User.cls, models.User.grade, models.User.last_name)
         .all()
     )
-
-
-# Review an activity and either accept or reject it.
-@app.post("/teacher/review/", response_model=schemas.Activity)
-def review_activity(
-    review: schemas.ActivityReview,
-    user=Security(manager, scopes=["teacher"]),
-    db: Session = Depends(get_db),
-):
-    query = db.query(models.Activity).filter(models.Activity.id == review.activity_id)
-    activity = query.first()
-    if not activity:
-        raise HTTPException(status_code=400, detail="Activity not found.")
-
-    query.update(
-        {
-            "reviewed_by_id": review.teacher_id if review.status else None,
-            "review_status": review.status,
-        }
-    )
-    db.commit()
-    db.refresh(activity)
-    return activity
 
 
 # User CRUD methods

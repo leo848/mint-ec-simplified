@@ -121,8 +121,6 @@ class Activity(ActivityDBCreate):
 
 # Other models
 class ActivityReview(BaseModel):
-    teacher_id: int
-    activity_id: int
     status: int
 
     @validator("status")
