@@ -27,6 +27,14 @@ export default Vue.extend({
 			);
 			this.activity = await response.json();
 		},
+		formatDate(oldDate: string): string {
+			return new Date(oldDate).toLocaleDateString(undefined, {
+				weekday: "long",
+				year: "numeric",
+				month: "long",
+				day: "numeric",
+			});
+		},
 	},
 	watch: {
 		$route() {
@@ -45,10 +53,19 @@ export default Vue.extend({
 						>{{ activity.title }}
 					</v-card-title>
 					<v-card-subtitle class="text-h5 pl-4" v-if="activity.category">
-						{{ activity.category.title }}
+						{{ activity.category.title }} <br />
+						{{ formatDate(activity.date) }}
 					</v-card-subtitle>
+					<v-card-text class="mt-n4">
+						<v-chip-group>
+							<v-chip disabled v-for="tag in activity.tags" :key="tag.id">
+								{{ tag.title }}
+							</v-chip>
+						</v-chip-group>
+					</v-card-text>
+					<v-card-subtitle class="text-overline">BESCHREIBUNG</v-card-subtitle>
 					<v-card-subtitle
-						class="text-h6 mb-4 font-weight-regular text--disabled"
+						class="text-h6 mt-n8 mb-4 font-weight-regular text--disabled"
 						v-html="
 							(activity.description || 'Keine erweiterte Beschreibung').replace(
 								'\n',
