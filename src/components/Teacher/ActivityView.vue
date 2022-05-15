@@ -38,7 +38,7 @@ export default Vue.extend({
 
 <template>
 	<div class="wrapper">
-		<v-card>
+		<v-card class="mb-8">
 			<v-card-title class="text-h3 text-center mt-4"
 				>{{ activity.title }}
 			</v-card-title>
@@ -57,17 +57,15 @@ export default Vue.extend({
 			<v-card-text>
 				<UserCard :user="activity.created_by" />
 			</v-card-text>
-			<v-card-actions>
-				<ActivityReviewItem
-					v-if="activity.id"
-					:activity="activity"
-					min-width="300px"
-					:key="activity.review_status"
-					card
-					teacher
-					@edit="fetchActivity"
-				/>
-			</v-card-actions>
 		</v-card>
+		<ActivityReviewItem
+			v-if="activity.id"
+			:activity="activity"
+			width="300px"
+			:key="activity.review_status"
+			card
+			teacher
+			@edit="fetchActivity"
+		/>
 	</div>
 </template>

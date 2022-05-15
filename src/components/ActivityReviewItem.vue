@@ -28,7 +28,7 @@ export default Vue.extend({
 			type: Boolean,
 			default: false,
 		},
-		minWidth: String,
+		width: String,
 	},
 	data: function () {
 		return {
@@ -89,7 +89,7 @@ export default Vue.extend({
 		v-if="card"
 		:loading="loading"
 		loading-height="20"
-		:min-width="minWidth"
+		:width="width"
 		:color="reviewColor"
 	>
 		<v-card-title>
@@ -105,7 +105,7 @@ export default Vue.extend({
 			>Bearbeitet von: <UserCard :user="activity.reviewed_by"
 		/></v-card-subtitle>
 		<v-card-actions v-if="teacher">
-			<v-menu offset-y>
+			<v-menu offset-x>
 				<template v-slot:activator="{ on, attrs }">
 					<v-btn
 						v-on="on"
@@ -137,7 +137,7 @@ export default Vue.extend({
 			</v-menu>
 			<v-spacer />
 			<v-btn fab v-if="status" @click="resetReviewStatus"
-				><v-icon>mdi-delete</v-icon></v-btn
+				><v-icon>mdi-close</v-icon></v-btn
 			>
 		</v-card-actions>
 	</v-card>
