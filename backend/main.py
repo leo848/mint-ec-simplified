@@ -134,7 +134,7 @@ def read_activities(
 ):
     return crud.get_activities(db)
 
-@app.get("/teacher/activities/{activity_id}", response_model=schemas.Activity)
+@app.get("/teacher/activities/{activity_id}/", response_model=schemas.Activity)
 def read_activity(
     activity_id: int,
     user=Security(manager, scopes=["teacher"]),
