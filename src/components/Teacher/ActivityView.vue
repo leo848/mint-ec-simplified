@@ -38,34 +38,36 @@ export default Vue.extend({
 
 <template>
 	<div class="wrapper">
-		<v-card class="mb-8">
-			<v-card-title class="text-h3 text-center mt-4"
-				>{{ activity.title }}
-			</v-card-title>
-			<v-card-subtitle class="text-h5 pl-4" v-if="activity.category">
-				{{ activity.category.title }}
-			</v-card-subtitle>
-			<v-card-subtitle
-				class="text-h6 mb-4 font-weight-regular text--disabled"
-				v-html="
-					(activity.description || 'Keine erweiterte Beschreibung').replace(
-						'\n',
-						'<br/>',
-					)
-				"
-			></v-card-subtitle>
-			<v-card-text>
-				<UserCard :user="activity.created_by" />
-			</v-card-text>
-		</v-card>
-		<ActivityReviewItem
-			v-if="activity.id"
-			:activity="activity"
-			width="300px"
-			:key="activity.review_status"
-			card
-			teacher
-			@edit="fetchActivity"
-		/>
+		<v-row align="stretch"
+			><v-col cols="12" md="8">
+				<v-card>
+					<v-card-title class="text-h3 text-center"
+						>{{ activity.title }}
+					</v-card-title>
+					<v-card-subtitle class="text-h5 pl-4" v-if="activity.category">
+						{{ activity.category.title }}
+					</v-card-subtitle>
+					<v-card-subtitle
+						class="text-h6 mb-4 font-weight-regular text--disabled"
+						v-html="
+							(activity.description || 'Keine erweiterte Beschreibung').replace(
+								'\n',
+								'<br/>',
+							)
+						"
+					></v-card-subtitle>
+					<v-card-text>
+						<UserCard :user="activity.created_by" />
+					</v-card-text> </v-card></v-col
+			><v-col cols="12" md="4">
+				<ActivityReviewItem
+					v-if="activity.id"
+					:activity="activity"
+					:key="activity.review_status"
+					height="100%"
+					card
+					teacher
+					@edit="fetchActivity" /></v-col
+		></v-row>
 	</div>
 </template>

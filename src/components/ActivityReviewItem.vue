@@ -29,6 +29,7 @@ export default Vue.extend({
 			default: false,
 		},
 		width: String,
+		height: String,
 	},
 	data: function () {
 		return {
@@ -90,8 +91,16 @@ export default Vue.extend({
 		:loading="loading"
 		loading-height="20"
 		:width="width"
+		:height="height"
 		:color="reviewColor"
-	>
+		class="d-flex flex-column"
+		><template slot="progress">
+			<v-progress-linear
+				:color="reviewColor + ' darken-2'"
+				height="10"
+				indeterminate
+			></v-progress-linear>
+		</template>
 		<v-card-title>
 			<ActivityReviewItem
 				:activity="activity"
@@ -104,6 +113,7 @@ export default Vue.extend({
 		<v-card-subtitle class="mt-1" v-if="activity.reviewed_by"
 			>Bearbeitet von: <UserCard :user="activity.reviewed_by"
 		/></v-card-subtitle>
+		<v-spacer />
 		<v-card-actions v-if="teacher">
 			<v-menu offset-x>
 				<template v-slot:activator="{ on, attrs }">
