@@ -35,6 +35,7 @@ export default Vue.extend({
 				return;
 			}
 			this.websitePreview = (await request.json()) as { [key: string]: string };
+			console.log(this.websitePreview);
 		},
 	},
 });
@@ -45,6 +46,8 @@ export default Vue.extend({
 		dense
 		:loading="websitePreview.loading"
 		:color="cardError ? 'red' : 'gray'"
+		:href="websitePreview.url"
+		target="_blank"
 	>
 		<v-list-item three-line>
 			<v-list-item-content>

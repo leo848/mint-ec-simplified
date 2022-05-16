@@ -114,6 +114,7 @@ export default Vue.extend({
 			]);
 		},
 		linkPreview(): void {
+			if (!this.data.website) return;
 			if (!/^https?:\/\//.test(this.data.website))
 				this.data.website = "https://" + this.data.website;
 			this.linkPreviewUrl = this.data.website as string;
@@ -221,6 +222,7 @@ export default Vue.extend({
 									prepend-icon="mdi-web"
 									clearable
 									clear-icon="mdi-close"
+									@click:clear="() => (this.linkPreviewUrl = '')"
 									@blur="linkPreview"
 								/>
 							</v-col>
