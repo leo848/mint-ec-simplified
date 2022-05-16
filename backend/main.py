@@ -197,7 +197,7 @@ def create_student_activity(
     return dbmethods.create_activity(activity, student_id, db, teacher=True, teacher_id=user.id)
 
 
-@app.get("/teacher/students/", response_model=list[schemas.User])
+@app.get("/teacher/students/", response_model=list[schemas.UserWithActivities])
 def read_students(
     user=Security(manager, scopes=["teacher"]), db: Session = Depends(get_db)
 ):

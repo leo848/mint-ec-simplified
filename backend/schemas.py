@@ -127,3 +127,6 @@ class ActivityReview(BaseModel):
     def allowed_status(cls, v):
         assert v in (-1, 0, 1), "Status must be in (-1, 0, 1), got {v}"
         return v
+
+class UserWithActivities(User):
+    created_activities: list[Activity]

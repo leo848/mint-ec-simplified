@@ -27,10 +27,6 @@ export default Vue.extend({
 		</v-card-text>
 		<v-card-actions>
 			<ActivityReviewItem :activity="activity" />
-			<v-spacer />
-			<!-- <v-btn icon> -->
-			<!-- 	<v-icon>mdi-pencil</v-icon> -->
-			<!-- </v-btn> -->
 		</v-card-actions>
 	</v-card>
 </template>

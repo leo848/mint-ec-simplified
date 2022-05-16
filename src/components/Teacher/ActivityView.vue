@@ -49,7 +49,9 @@ export default Vue.extend({
 		<v-row align="stretch"
 			><v-col cols="12" md="8">
 				<v-card>
-					<v-card-title class="text-h3 text-center"
+					<v-card-title
+						class="text-h3 word-wrap mb-2"
+						style="word-break: normal"
 						>{{ activity.title }}
 					</v-card-title>
 					<v-card-subtitle class="text-h5 pl-4" v-if="activity.category">
