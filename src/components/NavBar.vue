@@ -3,12 +3,11 @@ import Vue from "vue";
 
 export default Vue.extend({
 	name: "NavBar",
-	data: () => ({}),
+	data: () => ({ showBadge: false }),
 	created() {
 		const darkMode = localStorage.getItem("darkMode");
 		if (darkMode === null) {
-			this.$vuetify.theme.dark = false;
-			this.toggleMode();
+			this.showBadge = true;
 		} else {
 			this.$vuetify.theme.dark = JSON.parse(darkMode);
 		}
@@ -23,6 +22,7 @@ export default Vue.extend({
 				"darkMode",
 				JSON.stringify(this.$vuetify.theme.dark),
 			);
+			this.showBadge = false;
 		},
 	},
 });
@@ -35,6 +35,8 @@ export default Vue.extend({
 		></v-app-bar-nav-icon>
 		<v-toolbar-title>{{ $route.meta.title }}</v-toolbar-title>
 		<v-spacer />
-		<v-btn icon @click="toggleMode"><v-icon>mdi-brightness-6</v-icon></v-btn>
+		<v-badge overlap dot :value="showBadge">
+			<v-btn icon @click="toggleMode"><v-icon>mdi-brightness-6</v-icon></v-btn>
+		</v-badge>
 	</v-app-bar>
 </template>

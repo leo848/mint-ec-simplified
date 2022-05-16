@@ -1,7 +1,10 @@
 <script lang="ts">
 import Vue from "vue";
+import LinkPreview from "./LinkPreview.vue";
 
 export default Vue.extend({
+	name: "CreateActivityDialog",
+	components: { LinkPreview },
 	data: () => ({
 		show: false,
 		loading: false,
@@ -18,10 +21,9 @@ export default Vue.extend({
 			tags: [],
 		},
 		dateMenu: false,
+		linkPreviewUrl: "",
 		categoryList: [],
 		tagList: [],
-		websitePreview: null as null | { [key: string]: string | boolean },
-		cardError: false,
 		rules: {
 			title: [
 				(v: string) => !!v || "Bitte gib einen Titel ein.",
@@ -111,25 +113,10 @@ export default Vue.extend({
 				tags.json(),
 			]);
 		},
-		async getLinkPreview() {
-			this.cardError = false;
-			// requires linkpreview API key
-			if (!this.data.website || !process.env.VUE_APP_LINK_PREVIEW_API_KEY) {
-				this.websitePreview = null;
-				return;
-			}
-			this.websitePreview = { loading: true };
+		linkPreview(): void {
 			if (!/^https?:\/\//.test(this.data.website))
 				this.data.website = "https://" + this.data.website;
-			const request = await fetch("https://api.linkpreview.net/", {
-				method: "POST",
-				body: `key=${process.env.VUE_APP_LINK_PREVIEW_API_KEY}&q=${this.data.website}`,
-			});
-			if (!request.ok) {
-				this.cardError = true;
-				return;
-			}
-			this.websitePreview = (await request.json()) as { [key: string]: string };
+			this.linkPreviewUrl = this.data.website as string;
 		},
 		truncateString(str: string, len: number) {
 			return str.length <= len ? str : str.slice(0, len - 3) + "...";
@@ -234,35 +221,11 @@ export default Vue.extend({
 									prepend-icon="mdi-web"
 									clearable
 									clear-icon="mdi-close"
-									@blur="getLinkPreview()"
+									@blur="linkPreview"
 								/>
 							</v-col>
-							<v-col cols="12" sm="7" v-if="websitePreview">
-								<v-card
-									dense
-									:loading="websitePreview.loading"
-									:color="cardError ? 'red' : 'gray'"
-								>
-									<v-list-item three-line>
-										<v-list-item-content>
-											<div class="text-overline mb-2">VORSCHAU</div>
-											<v-list-item-title class="text-h5 mb-1">
-												{{
-													cardError
-														? "Fehler beim Laden der Vorschau"
-														: websitePreview.title
-												}}
-											</v-list-item-title>
-											<v-list-item-subtitle>{{
-												websitePreview.description
-											}}</v-list-item-subtitle>
-										</v-list-item-content>
-
-										<v-list-item-avatar tile size="100">
-											<v-img :src="websitePreview.image"
-										/></v-list-item-avatar>
-									</v-list-item>
-								</v-card>
+							<v-col cols="12" sm="7" v-if="linkPreviewUrl.length">
+								<LinkPreview :url="linkPreviewUrl" />
 							</v-col>
 							<v-col cols="12" sm="12">
 								<v-textarea
