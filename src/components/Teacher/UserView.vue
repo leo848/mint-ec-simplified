@@ -2,10 +2,11 @@
 import Vue from "vue";
 import ActivityCard from "../ActivityCard.vue";
 import CreateActivityDialog from "../CreateActivityDialog.vue";
+import ActivityOverview from "../ActivityOverview.vue";
 
 export default Vue.extend({
 	name: "UserView",
-	components: { ActivityCard, CreateActivityDialog },
+	components: { ActivityCard, CreateActivityDialog, ActivityOverview },
 	data: () => ({
 		user: {} as { [key: string]: any },
 		id: 0,
@@ -60,6 +61,11 @@ export default Vue.extend({
 			<v-card-subtitle class="text-h5 mb-4">{{ user.email }}</v-card-subtitle>
 		</v-card>
 		<v-row>
+			<v-col cols="12">
+				<ActivityOverview :activities="activities" v-if="!loading" />
+				<v-skeleton-loader v-else type="image" />
+			</v-col>
+
 			<v-col
 				cols="12"
 				sm="6"
