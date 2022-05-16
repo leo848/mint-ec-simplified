@@ -35,7 +35,6 @@ export default Vue.extend({
 				return;
 			}
 			this.websitePreview = (await request.json()) as { [key: string]: string };
-			console.log(this.websitePreview);
 		},
 	},
 });

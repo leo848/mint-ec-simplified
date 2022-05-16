@@ -8,6 +8,7 @@ export default Vue.extend({
 	data: () => ({
 		user: {} as { [key: string]: any },
 		loading: false,
+		hideDone: false,
 		search: "",
 		students: [],
 		grades: [
@@ -43,6 +44,14 @@ export default Vue.extend({
 				.toLowerCase()
 				.includes(this.search.toLowerCase());
 		},
+		studentShown(student: { [key: string]: any }): boolean {
+			return (
+				!this.hideDone ||
+				student.created_activities.some(
+					(activity: { [key: string]: any }) => activity.review_status === 0,
+				)
+			);
+		},
 	},
 	computed: {
 		requiredGrades() {
@@ -50,7 +59,9 @@ export default Vue.extend({
 				(grade: { number: number; string: string }): boolean =>
 					this.students.some(
 						(student: { [key: string]: any }): boolean =>
-							student.grade === grade.number && this.studentSearched(student),
+							student.grade === grade.number &&
+							this.studentSearched(student) &&
+							this.studentShown(student),
 					),
 				0,
 			);
@@ -66,6 +77,8 @@ export default Vue.extend({
 				v-model="search"
 				hide-details
 				prepend-icon="mdi-magnify"
+				append-outer-icon="mdi-message-badge"
+				@click:append-outer="hideDone = !hideDone"
 				single-line
 				clearable
 				placeholder="Filtern..."
@@ -87,7 +100,8 @@ export default Vue.extend({
 							<UserCard
 								v-for="student in students
 									.filter((s) => s.grade === grade.number)
-									.filter((s) => studentSearched(s))"
+									.filter((s) => studentSearched(s))
+									.filter((s) => studentShown(s))"
 								:key="student.id"
 								:user="student"
 								:search="search"

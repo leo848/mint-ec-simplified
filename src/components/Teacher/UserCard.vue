@@ -30,7 +30,6 @@ export default Vue.extend({
 			const amount = this.user.created_activities.filter(
 				(a: { [key: string]: any }) => a.review_status === 0,
 			).length;
-			console.log(amount);
 			return amount;
 		},
 	},
