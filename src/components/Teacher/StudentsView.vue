@@ -78,6 +78,7 @@ export default Vue.extend({
 				hide-details
 				prepend-icon="mdi-magnify"
 				append-outer-icon="mdi-message-badge"
+				@click:clear="search = ''"
 				@click:append-outer="hideDone = !hideDone"
 				single-line
 				clearable

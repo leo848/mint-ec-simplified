@@ -43,6 +43,7 @@ export default Vue.extend({
 <template>
 	<v-card
 		dense
+		v-if="websitePreview"
 		:loading="websitePreview.loading"
 		:color="cardError ? 'red' : 'gray'"
 		:href="websitePreview.url"

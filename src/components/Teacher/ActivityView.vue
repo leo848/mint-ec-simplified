@@ -2,10 +2,11 @@
 import Vue from "vue";
 import UserCard from "./UserCard.vue";
 import ActivityReviewItem from "../ActivityReviewItem.vue";
+import LinkPreview from "../LinkPreview.vue";
 
 export default Vue.extend({
 	name: "ActivityView",
-	components: { UserCard, ActivityReviewItem },
+	components: { UserCard, ActivityReviewItem, LinkPreview },
 	data: () => ({
 		activity: {} as { [key: string]: any },
 		id: 0,
@@ -79,14 +80,15 @@ export default Vue.extend({
 						<UserCard :user="activity.created_by" />
 					</v-card-text> </v-card></v-col
 			><v-col cols="12" md="4">
+				<LinkPreview :url="activity.website" class="mb-4" />
 				<ActivityReviewItem
 					v-if="activity.id"
 					:activity="activity"
 					:key="activity.review_status"
-					height="100%"
 					card
 					teacher
-					@edit="fetchActivity" /></v-col
+					@edit="fetchActivity"
+				/> </v-col
 		></v-row>
 	</div>
 </template>
