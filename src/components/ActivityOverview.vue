@@ -4,7 +4,7 @@ import Vue from "vue";
 export default Vue.extend({
 	name: "ActivityOverview",
 	props: {
-		activities: { type: Array },
+		activities: { type: Array, required: true, default: () => [] },
 	},
 	data: () => ({
 		unfilteredOverviewItems: [
@@ -31,13 +31,18 @@ export default Vue.extend({
 		],
 	}),
 	computed: {
-		activityOverview() {
+		activityOverview(): { [key: string]: number } {
 			return {
-				total: this.activities.length,
-				accepted: this.activities.filter((a) => a.review_status === 1).length,
-				rejected: this.activities.filter((a) => a.review_status === -1).length,
-				other: this.activities.filter((a) => a.review_status === 0).length,
-			} as { [key: string]: any };
+				total: (this.activities as any[]).length,
+				accepted: (this.activities as any[]).filter(
+					(a) => a.review_status === 1,
+				).length,
+				rejected: (this.activities as any[]).filter(
+					(a) => a.review_status === -1,
+				).length,
+				other: (this.activities as any[]).filter((a) => a.review_status === 0)
+					.length,
+			} as { [key: string]: number };
 		},
 		overviewItems() {
 			let overview = this.activityOverview as { [key: string]: any };
