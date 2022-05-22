@@ -1,14 +1,14 @@
 <script lang="ts">
 import Vue from "vue";
-import ActivityCard from "../ActivityCard.vue";
 import CreateActivityDialog from "../CreateActivityDialog.vue";
-import ActivityOverview from "../ActivityOverview.vue";
+import ActivityList from "../ActivityList.vue";
 
 export default Vue.extend({
 	name: "UserView",
-	components: { ActivityCard, CreateActivityDialog, ActivityOverview },
+	components: { ActivityList, CreateActivityDialog },
 	data: () => ({
 		user: {} as { [key: string]: any },
+		loading: false,
 		id: 0,
 		activities: [],
 	}),
@@ -18,6 +18,7 @@ export default Vue.extend({
 	},
 	methods: {
 		async fetchUser() {
+			this.loading = true;
 			const response = await fetch(
 				process.env.VUE_APP_BACKEND_ROOT + "/teacher/students/" + this.id + "/",
 				{
@@ -26,6 +27,7 @@ export default Vue.extend({
 			);
 			this.user = await response.json();
 			await this.fetchActivities();
+			this.loading = false;
 		},
 		async fetchActivities() {
 			const response = await fetch(
@@ -60,27 +62,7 @@ export default Vue.extend({
 			>
 			<v-card-subtitle class="text-h5 mb-4">{{ user.email }}</v-card-subtitle>
 		</v-card>
-		<v-row>
-			<v-col cols="12">
-				<ActivityOverview :activities="activities" v-if="!loading" />
-				<v-skeleton-loader v-else type="image" />
-			</v-col>
-
-			<v-col
-				cols="12"
-				sm="6"
-				xl="4"
-				v-for="activity in activities"
-				:key="activity.id"
-			>
-				<ActivityCard :activity="activity" teacher />
-			</v-col>
-			<v-col cols="12" sm="6" v-if="activities.length === 0">
-				<v-card>
-					<v-card-title class="text-h4">Keine Aktivitäten</v-card-title>
-				</v-card>
-			</v-col>
-		</v-row>
+		<ActivityList :activities="activities" :loading="loading" />
 		<CreateActivityDialog :user="user" @done="fetchActivities" teacher />
 	</div>
 </template>
