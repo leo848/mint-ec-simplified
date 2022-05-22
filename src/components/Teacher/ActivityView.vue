@@ -80,7 +80,7 @@ export default Vue.extend({
 						<UserCard :user="activity.created_by" />
 					</v-card-text> </v-card></v-col
 			><v-col cols="12" md="4">
-				<LinkPreview :url="activity.website" class="mb-4" />
+				<LinkPreview :url="activity.website" no-preview class="mb-4" />
 				<ActivityReviewItem
 					v-if="activity.id"
 					:activity="activity"

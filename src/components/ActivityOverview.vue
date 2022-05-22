@@ -4,7 +4,7 @@ import Vue from "vue";
 export default Vue.extend({
 	name: "ActivityOverview",
 	props: {
-		activities: { type: Array, required: true, default: () => [] },
+		activities: { type: Array, default: () => [] },
 	},
 	data: () => ({
 		unfilteredOverviewItems: [
@@ -60,7 +60,7 @@ export default Vue.extend({
 		><v-card-text>
 			<v-row>
 				<v-col v-for="(card, i) in overviewItems" :key="i">
-					<v-card :color="card.color" :loading="loading">
+					<v-card :color="card.color">
 						<v-card-title class="text-h2 justify-center">{{
 							activityOverview[card.value]
 						}}</v-card-title>

@@ -8,6 +8,10 @@ export default Vue.extend({
 	}),
 	props: {
 		url: String,
+		noPreview: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	async created() {
 		await this.fetchPreview();
@@ -51,7 +55,7 @@ export default Vue.extend({
 	>
 		<v-list-item three-line>
 			<v-list-item-content>
-				<div class="text-overline mb-2">VORSCHAU</div>
+				<div class="text-overline mb-2" v-if="!noPreview">VORSCHAU</div>
 				<v-list-item-title class="text-h5 mb-1">
 					{{
 						cardError ? "Fehler beim Laden der Vorschau" : websitePreview.title
