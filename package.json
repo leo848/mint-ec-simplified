@@ -14,7 +14,7 @@
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.5.1",
-    "vuetify": "^2.6.0"
+    "vuetify": "^2.6.10"
   },
   "devDependencies": {
     "@ky-is/vue-cli-plugin-tabs": "~1.1.0",
